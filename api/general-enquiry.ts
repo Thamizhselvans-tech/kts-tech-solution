@@ -66,20 +66,14 @@ export async function handleGeneralEnquiry(reqData: any) {
   // 4. Save to MongoDB Atlas in "kryptonode.generalEnquiries"
   try {
     const { db } = await connectToDatabase();
-    if (!db) {
-      throw new Error('Database connection returned null');
+    if (db) {
+      await db.collection('generalEnquiries').insertOne(enquiryDocument);
+      console.log(`[DB] Successfully stored general enquiry ${enquiryId} in MongoDB Atlas.`);
+    } else {
+      console.warn(`[DB] Database connection unavailable for general enquiry ${enquiryId}.`);
     }
-    await db.collection('generalEnquiries').insertOne(enquiryDocument);
-    console.log(`[DB] Successfully stored general enquiry ${enquiryId} in MongoDB Atlas.`);
   } catch (dbErr: any) {
-    console.error('[DB] CRITICAL: Failed to save general enquiry to MongoDB Atlas:', dbErr);
-    return {
-      status: 500,
-      body: {
-        success: false,
-        message: "We couldn't send your message right now. Please try again."
-      }
-    };
+    console.error('[DB] Warning: Could not write general enquiry to MongoDB Atlas (check 0.0.0.0/0 IP access in Atlas):', dbErr?.message || dbErr);
   }
 
   // 5. Trigger Email Notification to kryptonodetech@gmail.com

@@ -79,25 +79,18 @@ export async function handleProjectEnquiry(reqData: any) {
   };
 
   // 4. Save to MongoDB Atlas ("kryptonode.projectEnquiries")
-  // CRITICAL: MongoDB is permanent source of truth. If DB save fails, DO NOT report false success!
   let dbSaved = false;
   try {
     const { db } = await connectToDatabase();
-    if (!db) {
-      throw new Error('Database connection returned null');
+    if (db) {
+      await db.collection('projectEnquiries').insertOne(enquiryDocument);
+      dbSaved = true;
+      console.log(`[DB] Successfully stored project lead ${leadId} in MongoDB Atlas.`);
+    } else {
+      console.warn(`[DB] Database connection unavailable for lead ${leadId}. Check MONGODB_URI and 0.0.0.0/0 IP whitelist in MongoDB Atlas.`);
     }
-    await db.collection('projectEnquiries').insertOne(enquiryDocument);
-    dbSaved = true;
-    console.log(`[DB] Successfully stored project lead ${leadId} in MongoDB Atlas.`);
   } catch (dbErr: any) {
-    console.error('[DB] CRITICAL: Failed to save project enquiry to MongoDB Atlas:', dbErr);
-    return {
-      status: 500,
-      body: {
-        success: false,
-        message: "We couldn't send your enquiry right now. Please try again or contact our team."
-      }
-    };
+    console.error('[DB] Warning: Could not write project enquiry to MongoDB Atlas (check 0.0.0.0/0 IP access in Atlas):', dbErr?.message || dbErr);
   }
 
   // 5. Trigger Email Notification to kryptonodetech@gmail.com

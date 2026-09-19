@@ -71,11 +71,55 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
       const data = await res.json().catch(() => null);
       if (res.ok && data?.success) {
         setSubmittedRef(data.leadId || data.referenceId);
+        saveLead({
+          name: projectForm.name,
+          email: projectForm.email,
+          phone: projectForm.phone,
+          company: projectForm.company,
+          projectType: projectForm.projectType,
+          budget: projectForm.budget,
+          timeline: projectForm.timeline,
+          description: projectForm.description,
+          sourcePage: 'Contact Section - Project'
+        });
+        setProjectForm({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          projectType: '',
+          budget: '',
+          timeline: '',
+          description: '',
+          website_hp: ''
+        });
       } else {
+        saveLead({
+          name: projectForm.name,
+          email: projectForm.email,
+          phone: projectForm.phone,
+          company: projectForm.company,
+          projectType: projectForm.projectType,
+          budget: projectForm.budget,
+          timeline: projectForm.timeline,
+          description: projectForm.description,
+          sourcePage: 'Contact Section - Project'
+        });
         setErrorMessage(data?.message || "We couldn't send your enquiry right now. Please try again or contact our team.");
       }
     } catch (err) {
       console.error('[API] Contact section project submission error:', err);
+      saveLead({
+        name: projectForm.name,
+        email: projectForm.email,
+        phone: projectForm.phone,
+        company: projectForm.company,
+        projectType: projectForm.projectType,
+        budget: projectForm.budget,
+        timeline: projectForm.timeline,
+        description: projectForm.description,
+        sourcePage: 'Contact Section - Project'
+      });
       setErrorMessage("We couldn't send your enquiry right now. Please try again or contact our team.");
     } finally {
       setIsSubmitting(false);

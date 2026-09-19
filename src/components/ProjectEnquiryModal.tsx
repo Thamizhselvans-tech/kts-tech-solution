@@ -67,11 +67,57 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
       const data = await res.json().catch(() => null);
       if (res.ok && data?.success) {
         setSubmittedRef(data.leadId || data.referenceId);
+        saveLead({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          projectType: formData.projectType,
+          budget: formData.budget,
+          timeline: formData.timeline,
+          description: formData.description,
+          sourcePage: 'Project Enquiry Modal'
+        });
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          projectType: '',
+          budget: '',
+          timeline: '',
+          description: '',
+          website_hp: ''
+        });
       } else {
+        // Fallback: save to client admin storage so lead is never lost
+        saveLead({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          projectType: formData.projectType,
+          budget: formData.budget,
+          timeline: formData.timeline,
+          description: formData.description,
+          sourcePage: 'Project Enquiry Modal'
+        });
         setErrorMessage(data?.message || "We couldn't send your enquiry right now. Please try again or contact our team.");
       }
     } catch (err) {
       console.error('[API] Project enquiry submission error:', err);
+      // Fallback: save to client admin storage
+      saveLead({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        projectType: formData.projectType,
+        budget: formData.budget,
+        timeline: formData.timeline,
+        description: formData.description,
+        sourcePage: 'Project Enquiry Modal'
+      });
       setErrorMessage("We couldn't send your enquiry right now. Please try again or contact our team.");
     } finally {
       setIsSubmitting(false);
