@@ -14,8 +14,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, ini
     name: '',
     email: '',
     company: '',
-    budget: '$30k - $60k',
-    service: 'Product Engineering',
+    budget: '',
+    service: '',
     message: ''
   });
 
@@ -89,13 +89,16 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, ini
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-mono text-navy-800 uppercase tracking-wider mb-1.5 font-bold">
-                    Your Name *
+                    Your Name <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => {
+                      const filtered = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                      setFormData({ ...formData, name: filtered });
+                    }}
                     placeholder="Elena Voss"
                     className="w-full px-4 py-3 rounded-xl bg-softblue/50 border border-deepblue/15 text-navy-800 text-sm focus:outline-none focus:border-electric focus:ring-2 focus:ring-electric/20 font-sans"
                   />
@@ -103,7 +106,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, ini
 
                 <div>
                   <label className="block text-xs font-mono text-navy-800 uppercase tracking-wider mb-1.5 font-bold">
-                    Work Email *
+                    Work Email <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <input
                     type="email"
@@ -144,7 +147,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, ini
 
               <div>
                 <label className="block text-xs font-mono text-navy-800 uppercase tracking-wider mb-1.5 font-bold">
-                  Project Scope & Overview *
+                  Project Scope & Overview <span className="text-red-500 font-bold ml-0.5">*</span>
                 </label>
                 <textarea
                   required

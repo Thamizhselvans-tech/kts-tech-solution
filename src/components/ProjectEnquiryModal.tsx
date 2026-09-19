@@ -6,10 +6,9 @@ import { saveLead } from '../data/portfolioData';
 interface ProjectEnquiryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  preselectedType?: string;
 }
 
-export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen, onClose, preselectedType }) => {
+export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen, onClose }) => {
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -19,39 +18,41 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
     email: '',
     phone: '',
     company: '',
-    projectType: preselectedType || 'Web Application',
-    budget: '₹25,000 – ₹50,000',
-    timeline: '1–2 Months',
+    projectType: '',
+    budget: '',
+    timeline: '',
     description: '',
     website_hp: ''
   });
-
-  useEffect(() => {
-    if (preselectedType) {
-      setFormData((prev) => ({ ...prev, projectType: preselectedType }));
-    }
-  }, [preselectedType]);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    // Client-side validation: Name must only contain alphabets and spaces
+    const nameRegex = /^[a-zA-Z\s]{2,100}$/;
+    if (!nameRegex.test(formData.name.trim())) {
+      setErrorMessage('Full name must contain only alphabetic letters (at least 2 letters).');
+      return;
+    }
+
+    // Client-side validation: Phone must be exactly 10 digits
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(formData.phone.trim())) {
+      setErrorMessage('Phone number must be exactly 10 digits.');
+      return;
+    }
+
+    // Client-side validation: Project Type is compulsory
+    if (!formData.projectType || formData.projectType.trim() === '') {
+      setErrorMessage('Please select a project type.');
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage(null);
-
-    // Save lead locally as fallback
-    const localLead = saveLead({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      company: formData.company,
-      projectType: formData.projectType,
-      budget: formData.budget,
-      timeline: formData.timeline,
-      description: formData.description,
-      sourcePage: 'Project Enquiry Modal',
-      notes: `Service preselected: ${formData.projectType}`
-    });
 
     try {
       const res = await fetch('/api/project-enquiry', {
@@ -63,16 +64,15 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
         })
       });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSubmittedRef(data.referenceId || localLead.referenceId);
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
+        setSubmittedRef(data.leadId || data.referenceId);
       } else {
-        // Fallback to local reference ID if API returns non-critical message
-        setSubmittedRef(localLead.referenceId);
+        setErrorMessage(data?.message || "We couldn't send your enquiry right now. Please try again or contact our team.");
       }
     } catch (err) {
-      console.warn('[API] Could not reach endpoint directly, recorded locally:', err);
-      setSubmittedRef(localLead.referenceId);
+      console.error('[API] Project enquiry submission error:', err);
+      setErrorMessage("We couldn't send your enquiry right now. Please try again or contact our team.");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +147,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
                 Your project enquiry has been received successfully. The Kryptonode team will review your requirements and follow up.
               </p>
               <div className="inline-block px-4 py-2 rounded-xl bg-ivory-200 text-xs font-mono text-forest-900 font-bold border border-forest-900/10">
-                Reference ID: {submittedRef}
+                Lead ID: {submittedRef}
               </div>
               <div className="pt-4">
                 <button
@@ -193,13 +193,16 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-mono font-bold text-charcoal uppercase tracking-wider mb-1">
-                    Full Name *
+                    Full Name <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) => {
+                      const filtered = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                      setFormData({ ...formData, name: filtered });
+                    }}
                     placeholder="Your Full Name"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-sm focus:outline-none focus:border-emerald"
                   />
@@ -207,7 +210,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
 
                 <div>
                   <label className="block text-xs font-mono font-bold text-charcoal uppercase tracking-wider mb-1">
-                    Email Address *
+                    Email Address <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <input
                     type="email"
@@ -223,14 +226,18 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-mono font-bold text-charcoal uppercase tracking-wider mb-1">
-                    Phone / WhatsApp *
+                    Phone / WhatsApp <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <input
                     type="tel"
                     required
+                    maxLength={10}
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+91 98765 43210"
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setFormData({ ...formData, phone: digits });
+                    }}
+                    placeholder="10-digit mobile number"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-sm focus:outline-none focus:border-emerald"
                   />
                 </div>
@@ -252,13 +259,15 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-mono font-bold text-charcoal uppercase tracking-wider mb-1">
-                    Project Type *
+                    Project Type <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <select
+                    required
                     value={formData.projectType}
                     onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-xs font-bold"
                   >
+                    <option value="" disabled>Select Project Type</option>
                     {projectTypes.map((t) => (
                       <option key={t} value={t}>{t}</option>
                     ))}
@@ -274,6 +283,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
                     onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-xs font-bold"
                   >
+                    <option value="">Select Budget Range</option>
                     {budgetOptions.map((b) => (
                       <option key={b} value={b}>{b}</option>
                     ))}
@@ -289,6 +299,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
                     onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
                     className="w-full px-3 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-xs font-bold"
                   >
+                    <option value="">Select Timeline</option>
                     {timelineOptions.map((t) => (
                       <option key={t} value={t}>{t}</option>
                     ))}
@@ -298,7 +309,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
 
               <div>
                 <label className="block text-xs font-mono font-bold text-charcoal uppercase tracking-wider mb-1">
-                  Project Description *
+                  Project Description <span className="text-red-500 font-bold ml-0.5">*</span>
                 </label>
                 <textarea
                   required
@@ -322,7 +333,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
 
               <div className="pt-2 border-t border-forest-900/10 text-center">
                 <p className="text-[11px] text-charcoal/70 font-mono">
-                  Direct Email: <a href="mailto:kryptonodetechsolutions@gmail.com" className="text-emerald font-bold underline">kryptonodetechsolutions@gmail.com</a>
+                  Direct Email: <a href="mailto:kryptonodetech@gmail.com" className="text-emerald font-bold underline">kryptonodetech@gmail.com</a>
                 </p>
               </div>
             </form>

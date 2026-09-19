@@ -61,7 +61,11 @@ async function verifyAdminCredentials(email: string, pass: string): Promise<bool
   }
 
   // 2. Check Environment Variables
-  const isEmailMatch = (normalized === ADMIN_EMAIL || normalized === 'kryptonodetechsolutions@gmail.com');
+  const isEmailMatch = (
+    normalized === ADMIN_EMAIL ||
+    normalized === 'kryptonodetech@gmail.com' ||
+    normalized === 'kryptonodetechsolutions@gmail.com'
+  );
 
   if (!isEmailMatch) return false;
 

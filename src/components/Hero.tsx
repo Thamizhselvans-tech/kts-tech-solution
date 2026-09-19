@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronRight, Layers, Cpu, Code, Rocket, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
+import { TechNodeAnimation } from './TechNodeAnimation';
 
 interface HeroProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
+  onOpenProjectEnquiry: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
@@ -23,10 +24,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-7 flex flex-col items-start"
           >
-            {/* Small Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-soft border border-emerald/20 text-forest-900 text-xs font-mono font-bold tracking-widest uppercase mb-4 shadow-forest-subtle">
-              <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
-              KRYPTONODE TECH SOLUTIONS PVT LTD
+            {/* Prominent First-Sight Brand Eyebrow Badge */}
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-forest-950/5 border border-forest-900/15 text-forest-950 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase mb-5 shadow-forest-subtle">
+              <img
+                src="/kts-logo.png"
+                alt="Kryptonode"
+                className="w-5 h-5 rounded-full object-contain p-0.5 bg-black border border-emerald/50 shadow-sm"
+              />
+              <span className="font-extrabold text-forest-900 font-sans tracking-tight">Kryptonode</span>
+              <span className="text-emerald font-mono text-[11px] font-bold">• Tech Solutions Pvt Ltd</span>
             </div>
 
             {/* Main Heading */}
@@ -67,68 +73,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
             </div>
           </motion.div>
 
-          {/* Right Hero Product-System Visual (IDEA → DESIGN → BUILD → LAUNCH) */}
+          {/* Right Hero Interactive Animated Tech Node Visual (60fps Emerald Tech Video) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-5 w-full flex justify-center"
           >
-            <div className="relative w-full max-w-[500px] p-6 rounded-3xl bg-ivory-100 border border-forest-900/15 shadow-forest-card">
-              <div className="flex items-center justify-between pb-4 mb-6 border-b border-forest-900/10">
-                <span className="text-xs font-mono font-bold text-forest-900 uppercase tracking-wider flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-emerald" />
-                  PRODUCT DEVELOPMENT SYSTEM
-                </span>
-                <span className="text-[10px] font-mono px-2.5 py-1 bg-emerald-soft text-forest-900 rounded-full font-bold">
-                  Kryptonode Workflow
-                </span>
-              </div>
-
-              {/* 4 Interactive Process Steps Visualization */}
-              <div className="space-y-4">
-                {[
-                  { step: '01', phase: 'IDEA', title: 'Problem Discovery & Feature Scope', icon: Layers, status: 'Completed' },
-                  { step: '02', phase: 'DESIGN', title: 'User Flows & UI Wireframes', icon: Code, status: 'Validated' },
-                  { step: '03', phase: 'BUILD', title: 'Full Stack Code & Integrations', icon: Cpu, status: 'Active Code' },
-                  { step: '04', phase: 'LAUNCH', title: 'Cloud Production & Growth', icon: Rocket, status: 'Ready' },
-                ].map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <div
-                      key={item.step}
-                      className="p-4 rounded-2xl bg-ivory-50 border border-forest-900/10 hover:border-emerald/40 transition-all flex items-center justify-between group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-forest-900 text-white flex items-center justify-center font-mono text-xs font-bold group-hover:bg-emerald transition-colors">
-                          <Icon className="w-4 h-4 text-white" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono font-bold text-emerald uppercase">
-                              {item.phase}
-                            </span>
-                            <span className="text-[10px] text-emerald-muted">• Step {item.step}</span>
-                          </div>
-                          <div className="text-xs font-bold text-charcoal font-sans">
-                            {item.title}
-                          </div>
-                        </div>
-                      </div>
-                      <CheckCircle2 className="w-4 h-4 text-emerald shrink-0" />
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Connecting System Flow Indicator */}
-              <div className="mt-6 pt-4 border-t border-forest-900/10 flex items-center justify-between text-xs font-mono text-charcoal/70">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald animate-pulse" />
-                  Your Problem First. Technology Second.
-                </span>
-              </div>
-            </div>
+            <TechNodeAnimation />
           </motion.div>
 
         </div>

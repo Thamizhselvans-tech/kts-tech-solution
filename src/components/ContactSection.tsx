@@ -3,11 +3,9 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MessageSquare, Send, CheckCircle2, MessageCircle, Instagram, Linkedin } from 'lucide-react';
 import { COMPANY_INFO, TEAM_MEMBERS, saveLead } from '../data/portfolioData';
 
-interface ContactSectionProps {
-  initialServiceCategory?: string;
-}
+interface ContactSectionProps {}
 
-export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCategory }) => {
+export const ContactSection: React.FC<ContactSectionProps> = () => {
   const [activePath, setActivePath] = useState<'project' | 'general'>('project');
   const [submittedRef, setSubmittedRef] = useState<string | null>(null);
 
@@ -17,9 +15,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
     email: '',
     phone: '',
     company: '',
-    projectType: initialServiceCategory || 'Web Application',
-    budget: '₹25,000 – ₹50,000',
-    timeline: '1–2 Months',
+    projectType: '',
+    budget: '',
+    timeline: '',
     description: '',
     website_hp: ''
   });
@@ -29,28 +27,40 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
     name: '',
     email: '',
     phone: '',
-    enquiryType: 'General',
+    enquiryType: '',
     message: '',
     website_hp: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    // Client-side validation: Name must only contain alphabets and spaces
+    const nameRegex = /^[a-zA-Z\s]{2,100}$/;
+    if (!nameRegex.test(projectForm.name.trim())) {
+      setErrorMessage('Full name must contain only alphabetic letters (at least 2 letters).');
+      return;
+    }
+
+    // Client-side validation: Phone must be exactly 10 digits
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(projectForm.phone.trim())) {
+      setErrorMessage('Phone number must be exactly 10 digits.');
+      return;
+    }
+
+    // Client-side validation: Project Type is compulsory
+    if (!projectForm.projectType || projectForm.projectType.trim() === '') {
+      setErrorMessage('Please select a project type.');
+      return;
+    }
+
     setIsSubmitting(true);
-    const saved = saveLead({
-      name: projectForm.name,
-      email: projectForm.email,
-      phone: projectForm.phone,
-      company: projectForm.company,
-      projectType: projectForm.projectType,
-      budget: projectForm.budget,
-      timeline: projectForm.timeline,
-      description: projectForm.description,
-      sourcePage: 'Contact Section - Path 1 Project',
-      notes: `Target Project Type: ${projectForm.projectType}`
-    });
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/project-enquiry', {
@@ -58,14 +68,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...projectForm, sourcePage: 'Contact Section - Path 1 Project' })
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSubmittedRef(data.referenceId || saved.referenceId);
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
+        setSubmittedRef(data.leadId || data.referenceId);
       } else {
-        setSubmittedRef(saved.referenceId);
+        setErrorMessage(data?.message || "We couldn't send your enquiry right now. Please try again or contact our team.");
       }
     } catch (err) {
-      setSubmittedRef(saved.referenceId);
+      console.error('[API] Contact section project submission error:', err);
+      setErrorMessage("We couldn't send your enquiry right now. Please try again or contact our team.");
     } finally {
       setIsSubmitting(false);
     }
@@ -73,33 +84,46 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
 
   const handleGeneralSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    // Client-side validation: Name must only contain alphabets and spaces
+    const nameRegex = /^[a-zA-Z\s]{2,100}$/;
+    if (!nameRegex.test(generalForm.name.trim())) {
+      setErrorMessage('Full name must contain only alphabetic letters (at least 2 letters).');
+      return;
+    }
+
+    // Client-side validation: Phone must be exactly 10 digits
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(generalForm.phone.trim())) {
+      setErrorMessage('Phone number must be exactly 10 digits.');
+      return;
+    }
+
+    // Client-side validation: Enquiry Type is compulsory
+    if (!generalForm.enquiryType || generalForm.enquiryType.trim() === '') {
+      setErrorMessage('Please select an enquiry type.');
+      return;
+    }
+
     setIsSubmitting(true);
-    const saved = saveLead({
-      name: generalForm.name,
-      email: generalForm.email,
-      phone: generalForm.phone,
-      projectType: `General (${generalForm.enquiryType})`,
-      budget: 'N/A',
-      timeline: 'N/A',
-      description: generalForm.message,
-      sourcePage: 'Contact Section - Path 2 General',
-      notes: `General Enquiry Type: ${generalForm.enquiryType}`
-    });
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/general-enquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(generalForm)
+        body: JSON.stringify({ ...generalForm, sourcePage: 'Contact Section - Path 2 General' })
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setSubmittedRef(data.referenceId || saved.referenceId);
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
+        setSubmittedRef(data.enquiryId || data.referenceId);
       } else {
-        setSubmittedRef(saved.referenceId);
+        setErrorMessage(data?.message || "We couldn't send your message right now. Please try again.");
       }
     } catch (err) {
-      setSubmittedRef(saved.referenceId);
+      console.error('[API] Contact section general enquiry submission error:', err);
+      setErrorMessage("We couldn't send your message right now. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -194,24 +218,44 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
             ) : activePath === 'project' ? (
               /* PATH 1: START A PROJECT FORM */
               <form onSubmit={handleProjectSubmit} className="space-y-3.5 font-sans">
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="website_hp"
+                  value={projectForm.website_hp}
+                  onChange={(e) => setProjectForm({ ...projectForm, website_hp: e.target.value })}
+                  style={{ display: 'none' }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+
+                {errorMessage && (
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-sans">
+                    {errorMessage}
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Your Name *
+                      Your Name <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={projectForm.name}
-                      onChange={(e) => setProjectForm({ ...projectForm, name: e.target.value })}
-                      placeholder="Name"
+                      onChange={(e) => {
+                        const filtered = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                        setProjectForm({ ...projectForm, name: filtered });
+                      }}
+                      placeholder="Your Full Name"
                       className="w-full px-3.5 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs focus:outline-none focus:border-emerald"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Email Address *
+                      Email Address <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="email"
@@ -227,14 +271,18 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Phone / WhatsApp *
+                      Phone / WhatsApp <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="tel"
                       required
+                      maxLength={10}
                       value={projectForm.phone}
-                      onChange={(e) => setProjectForm({ ...projectForm, phone: e.target.value })}
-                      placeholder="9876543210"
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setProjectForm({ ...projectForm, phone: digits });
+                      }}
+                      placeholder="10-digit mobile number"
                       className="w-full px-3.5 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs focus:outline-none focus:border-emerald"
                     />
                   </div>
@@ -256,13 +304,15 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Project Type *
+                      Project Type <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <select
+                      required
                       value={projectForm.projectType}
                       onChange={(e) => setProjectForm({ ...projectForm, projectType: e.target.value })}
                       className="w-full px-3 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs font-bold"
                     >
+                      <option value="" disabled>Select Project Type</option>
                       {projectTypes.map((type) => (
                         <option key={type} value={type}>{type}</option>
                       ))}
@@ -278,12 +328,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
                       onChange={(e) => setProjectForm({ ...projectForm, budget: e.target.value })}
                       className="w-full px-3 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs font-bold"
                     >
-                      <option>Just Exploring</option>
-                      <option>Under ₹25,000</option>
-                      <option>₹25,000 – ₹50,000</option>
-                      <option>₹50,000 – ₹1,00,000</option>
-                      <option>₹1,00,000+</option>
-                      <option>Need Guidance</option>
+                      <option value="">Select Budget Range</option>
+                      <option value="Just Exploring">Just Exploring</option>
+                      <option value="Under ₹25,000">Under ₹25,000</option>
+                      <option value="₹25,000 – ₹50,000">₹25,000 – ₹50,000</option>
+                      <option value="₹50,000 – ₹1,00,000">₹50,000 – ₹1,00,000</option>
+                      <option value="₹1,00,000+">₹1,00,000+</option>
+                      <option value="Need Guidance">Need Guidance</option>
                     </select>
                   </div>
 
@@ -296,18 +347,19 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
                       onChange={(e) => setProjectForm({ ...projectForm, timeline: e.target.value })}
                       className="w-full px-3 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs font-bold"
                     >
-                      <option>ASAP</option>
-                      <option>1–2 Months</option>
-                      <option>2–3 Months</option>
-                      <option>3–6 Months</option>
-                      <option>Flexible</option>
+                      <option value="">Select Timeline</option>
+                      <option value="ASAP">ASAP</option>
+                      <option value="1–2 Months">1–2 Months</option>
+                      <option value="2–3 Months">2–3 Months</option>
+                      <option value="3–6 Months">3–6 Months</option>
+                      <option value="Flexible">Flexible</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                    Project Description *
+                    Project Description <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <textarea
                     required
@@ -321,32 +373,52 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-forest-900 hover:bg-emerald text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-forest-subtle flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-forest-900 hover:bg-emerald disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-forest-subtle flex items-center justify-center gap-2 transition-colors"
                 >
-                  Send Project Enquiry →
+                  {isSubmitting ? 'Sending Project Enquiry...' : 'Send Project Enquiry →'}
                 </button>
               </form>
             ) : (
               /* PATH 2: GENERAL ENQUIRY FORM */
               <form onSubmit={handleGeneralSubmit} className="space-y-3.5 font-sans">
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="website_hp"
+                  value={generalForm.website_hp}
+                  onChange={(e) => setGeneralForm({ ...generalForm, website_hp: e.target.value })}
+                  style={{ display: 'none' }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+
+                {errorMessage && (
+                  <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-sans">
+                    {errorMessage}
+                  </div>
+                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Your Name *
+                      Your Name <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={generalForm.name}
-                      onChange={(e) => setGeneralForm({ ...generalForm, name: e.target.value })}
-                      placeholder="Name"
+                      onChange={(e) => {
+                        const filtered = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                        setGeneralForm({ ...generalForm, name: filtered });
+                      }}
+                      placeholder="Your Full Name"
                       className="w-full px-3.5 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs focus:outline-none focus:border-emerald"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Email Address *
+                      Email Address <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="email"
@@ -362,40 +434,45 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Phone Number *
+                      Phone Number <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <input
                       type="tel"
                       required
+                      maxLength={10}
                       value={generalForm.phone}
-                      onChange={(e) => setGeneralForm({ ...generalForm, phone: e.target.value })}
-                      placeholder="Phone Number"
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setGeneralForm({ ...generalForm, phone: digits });
+                      }}
+                      placeholder="10-digit mobile number"
                       className="w-full px-3.5 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs focus:outline-none focus:border-emerald"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                      Enquiry Type *
+                      Enquiry Type <span className="text-red-500 font-bold ml-0.5">*</span>
                     </label>
                     <select
+                      required
                       value={generalForm.enquiryType}
                       onChange={(e) => setGeneralForm({ ...generalForm, enquiryType: e.target.value })}
                       className="w-full px-3 py-2 rounded-lg bg-ivory-100 border border-forest-900/15 text-charcoal text-xs font-bold"
                     >
-                      <option>General</option>
-                      <option>Partnership</option>
-                      <option>Internship</option>
-                      <option>Career</option>
-                      <option>Collaboration</option>
-                      <option>Other</option>
+                      <option value="" disabled>Select Enquiry Type</option>
+                      <option value="General">General</option>
+                      <option value="Partnership">Partnership</option>
+                      <option value="Career">Career</option>
+                      <option value="Collaboration">Collaboration</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[11px] font-mono font-bold text-charcoal uppercase mb-1">
-                    Message *
+                    Message <span className="text-red-500 font-bold ml-0.5">*</span>
                   </label>
                   <textarea
                     required
@@ -409,9 +486,10 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ initialServiceCa
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-forest-900 hover:bg-emerald text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-forest-subtle flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3 bg-forest-900 hover:bg-emerald disabled:opacity-50 text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-forest-subtle flex items-center justify-center gap-2 transition-colors"
                 >
-                  Send General Enquiry →
+                  {isSubmitting ? 'Sending Message...' : 'Send General Enquiry →'}
                 </button>
               </form>
             )}

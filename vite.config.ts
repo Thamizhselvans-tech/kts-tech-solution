@@ -25,20 +25,21 @@ const apiDevPlugin = (): Plugin => ({
           let result: { status: number; body: any; headers?: Record<string, string> } = { status: 404, body: { success: false, message: 'Not found' } };
 
           const url = req.url || '';
+          const pathname = url.split('?')[0];
 
-          if (url === '/api/project-enquiry') {
+          if (pathname === '/api/project-enquiry') {
             result = await handleProjectEnquiry(bodyData);
-          } else if (url === '/api/general-enquiry') {
+          } else if (pathname === '/api/general-enquiry') {
             result = await handleGeneralEnquiry(bodyData);
-          } else if (url === '/api/internship' || url === '/api/internship-application') {
+          } else if (pathname === '/api/internship' || pathname === '/api/internship-application') {
             result = await handleInternshipApplication(bodyData);
-          } else if (url === '/api/admin/login') {
+          } else if (pathname === '/api/admin/login') {
             result = await handleAdminLogin({ method: req.method, headers: req.headers, body: bodyData });
-          } else if (url.startsWith('/api/admin/leads')) {
+          } else if (pathname.startsWith('/api/admin/leads')) {
             result = await handleAdminLeads({ method: req.method, headers: req.headers, body: bodyData });
-          } else if (url.startsWith('/api/admin/internships')) {
+          } else if (pathname.startsWith('/api/admin/internships')) {
             result = await handleAdminInternships({ method: req.method, headers: req.headers, body: bodyData });
-          } else if (url.startsWith('/api/admin/enquiries')) {
+          } else if (pathname.startsWith('/api/admin/enquiries')) {
             result = await handleAdminEnquiries({ method: req.method, headers: req.headers, body: bodyData });
           }
 

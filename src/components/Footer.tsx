@@ -4,12 +4,11 @@ import { KryptonodeLogo } from './KryptonodeLogo';
 import { COMPANY_INFO, TEAM_MEMBERS } from '../data/portfolioData';
 
 interface FooterProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
-  onOpenInternshipModal: (track?: string) => void;
+  onOpenProjectEnquiry: () => void;
   onOpenAdminPortal: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenInternshipModal, onOpenAdminPortal }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenAdminPortal }) => {
   return (
     <footer className="bg-transparent border-t border-forest-900/10 pt-12 pb-8 text-charcoal font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,8 +40,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenInte
               <li><a href="#about" className="hover:text-forest-900 transition-colors">About</a></li>
               <li><a href="#services" className="hover:text-forest-900 transition-colors">Services</a></li>
               <li><a href="#projects" className="hover:text-forest-900 transition-colors">Projects</a></li>
-              <li><button onClick={() => onOpenInternshipModal()} className="hover:text-forest-900 transition-colors text-left">Internship</button></li>
-              <li><a href="#team" className="hover:text-forest-900 transition-colors">Team</a></li>
               <li><a href="#contact" className="hover:text-forest-900 transition-colors">Contact</a></li>
             </ul>
           </div>
@@ -133,8 +130,6 @@ export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenInte
             <a href="#" className="hover:underline">Privacy Policy</a>
             <span>•</span>
             <a href="#" className="hover:underline">Terms & Conditions</a>
-            <span>•</span>
-            <button onClick={() => onOpenInternshipModal()} className="hover:underline">Internship Terms</button>
           </div>
         </div>
 

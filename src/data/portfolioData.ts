@@ -51,23 +51,30 @@ export interface TeamMember {
 
 export interface Lead {
   id: string;
+  leadId?: string;
   name: string;
   email: string;
   phone: string;
   company?: string;
+  companyName?: string;
   projectType: string;
   budget: string;
+  budgetRange?: string;
   timeline: string;
   description: string;
   sourcePage: string;
-  date: string;
+  date?: string;
   status: 'New' | 'Contacted' | 'Discussion' | 'Proposal Sent' | 'Won' | 'Lost';
   notes?: string;
   referenceId: string;
+  emailStatus?: 'pending' | 'sent' | 'failed';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface InternshipApplication {
   id: string;
+  applicationId?: string;
   fullName: string;
   email: string;
   phone: string;
@@ -76,14 +83,21 @@ export interface InternshipApplication {
   department: string;
   academicYear: string;
   internshipTrack: string;
-  existingSkills: string;
+  skills?: string;
+  existingSkills?: string;
   githubUrl?: string;
+  github?: string;
   portfolioUrl?: string;
-  whyJoin: string;
+  portfolio?: string;
+  whyJoin?: string;
+  motivation?: string;
   resumeUrl?: string;
-  appliedDate: string;
+  appliedDate?: string;
   status: 'New' | 'Reviewed' | 'Shortlisted' | 'Accepted' | 'Rejected' | 'Completed';
   notes?: string;
+  emailStatus?: 'pending' | 'sent' | 'failed';
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const COMPANY_INFO = {
@@ -92,12 +106,12 @@ export const COMPANY_INFO = {
   headline: "We Build Ideas Into Real Products.",
   secondaryTagline: "Technology • Design • Development • Growth",
   philosophy: "Your Problem First. Technology Second.",
-  email: "kryptonodetechsolutions@gmail.com",
+  email: "kryptonodetech@gmail.com",
   phone: "8903850119",
   phoneFormatted: "+91 89038 50119",
   whatsapp: "https://wa.me/918903850119",
   instagram: "https://www.instagram.com/krypotnode_?stkn=MTd6Y255dHd3bXp5Ng==",
-  linkedin: "https://www.linkedin.com/in/kryptonode-tech-solutions-448965437?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+  linkedin: "https://www.linkedin.com/in/kryptonode-tech-solutions-06b5b3438?utm_source=share_via&utm_content=profile&utm_medium=member_android",
   location: "India • Global Remote",
 };
 

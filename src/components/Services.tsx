@@ -4,7 +4,7 @@ import { SERVICES, Service } from '../data/portfolioData';
 import { Globe, Layers, Smartphone, Cpu, Briefcase, Rocket, ArrowRight, X, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface ServicesProps {
-  onOpenProjectEnquiry: (serviceCategory?: string) => void;
+  onOpenProjectEnquiry: () => void;
 }
 
 export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
@@ -93,7 +93,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
                 </button>
 
                 <button
-                  onClick={() => onOpenProjectEnquiry(service.category)}
+                  onClick={() => onOpenProjectEnquiry()}
                   className="px-3.5 py-2 bg-forest-900 hover:bg-emerald text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all shadow-forest-subtle"
                 >
                   <span>Discuss Your Project</span>
@@ -146,9 +146,8 @@ export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
 
                 <button
                   onClick={() => {
-                    const cat = selectedService.category;
                     setSelectedService(null);
-                    onOpenProjectEnquiry(cat);
+                    onOpenProjectEnquiry();
                   }}
                   className="w-full py-3 bg-forest-900 text-white font-bold text-xs rounded-xl uppercase tracking-wider flex items-center justify-center gap-2 shadow-forest-subtle"
                 >

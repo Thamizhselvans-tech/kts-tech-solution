@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Menu, X, GraduationCap, Lock } from 'lucide-react';
+import { ArrowRight, Menu, X, Lock } from 'lucide-react';
 import { KryptonodeLogo } from './KryptonodeLogo';
 
 interface NavbarProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
-  onOpenInternshipModal: () => void;
+  onOpenProjectEnquiry: () => void;
   onOpenAdminPortal: () => void;
   activeTab?: string;
   setActiveTab?: (tab: string) => void;
@@ -13,7 +12,6 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenProjectEnquiry,
-  onOpenInternshipModal,
   onOpenAdminPortal,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,7 +22,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
 
-      const sections = ['home', 'about', 'services', 'startup-mvp', 'process', 'projects', 'technology', 'internship', 'team', 'contact'];
+      const sections = ['home', 'about', 'services', 'startup-mvp', 'process', 'projects', 'technology', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -49,8 +47,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     { name: 'About', href: '#about' },
     { name: 'Services', href: '#services' },
     { name: 'Projects', href: '#projects' },
-    { name: 'Internship', href: '#internship' },
-    { name: 'Team', href: '#team' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -96,16 +92,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               })}
             </nav>
 
-            {/* Actions: Primary CTA, Secondary CTA & Admin Portal Trigger */}
+            {/* Actions: Primary CTA & Admin Portal Trigger */}
             <div className="hidden lg:flex items-center gap-2.5">
-              <button
-                onClick={onOpenInternshipModal}
-                className="px-4 py-2 text-xs font-semibold text-forest-900 bg-emerald-soft hover:bg-forest-900 hover:text-white rounded-full border border-forest-900/15 transition-all duration-300 flex items-center gap-1.5"
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                <span>Join Internship</span>
-              </button>
-
               <button
                 onClick={() => onOpenProjectEnquiry()}
                 className="px-5 py-2.5 text-xs font-semibold tracking-wide text-white bg-forest-900 hover:bg-emerald text-milk-100 rounded-full shadow-forest-subtle hover:shadow-forest-glow transition-all duration-300 flex items-center gap-1.5 group"
@@ -175,17 +163,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   Start Your Project
                   <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenInternshipModal();
-                  }}
-                  className="w-full py-3 px-4 bg-emerald-soft text-forest-900 font-semibold text-sm rounded-xl flex items-center justify-center gap-2 border border-forest-900/15"
-                >
-                  <GraduationCap className="w-4 h-4" />
-                  Join Internship
                 </button>
 
                 <button

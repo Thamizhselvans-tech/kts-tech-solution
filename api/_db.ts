@@ -29,11 +29,21 @@ export async function connectToDatabase(): Promise<{ client: MongoClient | null;
     
     // Set up collection indexes
     await db.collection('projectEnquiries').createIndex({ leadId: 1 }, { unique: true });
+    await db.collection('projectEnquiries').createIndex({ email: 1 });
+    await db.collection('projectEnquiries').createIndex({ status: 1 });
     await db.collection('projectEnquiries').createIndex({ createdAt: -1 });
+
     await db.collection('internshipApplications').createIndex({ applicationId: 1 }, { unique: true });
+    await db.collection('internshipApplications').createIndex({ email: 1 });
+    await db.collection('internshipApplications').createIndex({ status: 1 });
+    await db.collection('internshipApplications').createIndex({ internshipTrack: 1 });
     await db.collection('internshipApplications').createIndex({ createdAt: -1 });
+
     await db.collection('generalEnquiries').createIndex({ enquiryId: 1 }, { unique: true });
+    await db.collection('generalEnquiries').createIndex({ email: 1 });
+    await db.collection('generalEnquiries').createIndex({ status: 1 });
     await db.collection('generalEnquiries').createIndex({ createdAt: -1 });
+
     await db.collection('admins').createIndex({ email: 1 }, { unique: true });
 
     cachedClient = client;

@@ -1,12 +1,11 @@
 import React from 'react';
-import { ArrowRight, MessageSquare, GraduationCap, Sparkles } from 'lucide-react';
+import { ArrowRight, MessageSquare, Sparkles } from 'lucide-react';
 
 interface CTAProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
-  onOpenInternshipModal: () => void;
+  onOpenProjectEnquiry: () => void;
 }
 
-export const CTA: React.FC<CTAProps> = ({ onOpenProjectEnquiry, onOpenInternshipModal }) => {
+export const CTA: React.FC<CTAProps> = ({ onOpenProjectEnquiry }) => {
   return (
     <section className="py-14 sm:py-16 bg-forest-900 text-white relative overflow-hidden border-t border-forest-800">
       {/* Background Grid Canvas */}
@@ -50,14 +49,6 @@ export const CTA: React.FC<CTAProps> = ({ onOpenProjectEnquiry, onOpenInternship
             <MessageSquare className="w-4 h-4 text-emerald-light" />
             <span>Chat With Our Team</span>
           </a>
-
-          <button
-            onClick={onOpenInternshipModal}
-            className="w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-semibold tracking-wide text-emerald-light bg-white/5 hover:bg-white/10 border border-white/15 rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <GraduationCap className="w-4 h-4" />
-            <span>Join Our Internship</span>
-          </button>
         </div>
 
       </div>

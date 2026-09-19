@@ -21,15 +21,16 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
     email: '',
     phone: '',
     college: '',
-    degree: 'B.E / B.Tech',
-    department: 'Computer Science',
-    academicYear: '3rd Year',
-    internshipTrack: preselectedTrack || INTERNSHIP_TRACKS[0],
+    degree: '',
+    department: '',
+    academicYear: '',
+    internshipTrack: '',
     existingSkills: '',
     githubUrl: '',
     portfolioUrl: '',
     whyJoin: '',
-    resumeUrl: ''
+    resumeUrl: '',
+    website_hp: ''
   });
 
   // Body scroll lock & ESC key navigation
@@ -72,6 +73,8 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -81,19 +84,16 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setAppId(data.referenceId || `KN-INT-${Math.floor(100000 + Math.random() * 900000)}`);
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
+        setAppId(data.applicationId || data.referenceId);
         setSubmitted(true);
       } else {
-        const saved = saveInternshipApplication(formData);
-        setAppId(saved.id || `KN-INT-${Math.floor(100000 + Math.random() * 900000)}`);
-        setSubmitted(true);
+        setErrorMessage(data?.message || "We couldn't submit your application right now. Please try again.");
       }
     } catch (err) {
-      const saved = saveInternshipApplication(formData);
-      setAppId(saved.id || `KN-INT-${Math.floor(100000 + Math.random() * 900000)}`);
-      setSubmitted(true);
+      console.error('[API] Internship submission error:', err);
+      setErrorMessage("We couldn't submit your application right now. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -160,6 +160,17 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-4 overflow-y-auto font-sans">
+              {/* Spam Honeypot */}
+              <input
+                type="text"
+                name="website_hp"
+                value={formData.website_hp}
+                onChange={(e) => setFormData({ ...formData, website_hp: e.target.value })}
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
               {errorMessage && (
                 <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
@@ -260,11 +271,12 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
                     onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-ivory-50 border border-forest-900/15 text-xs text-charcoal"
                   >
-                    <option>1st Year</option>
-                    <option>2nd Year</option>
-                    <option>3rd Year</option>
-                    <option>4th Year</option>
-                    <option>Passed Out</option>
+                    <option value="">Select Year</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="Passed Out">Passed Out</option>
                   </select>
                 </div>
               </div>
@@ -278,6 +290,7 @@ export const InternshipModal: React.FC<InternshipModalProps> = ({ isOpen, onClos
                   onChange={(e) => setFormData({ ...formData, internshipTrack: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-ivory-50 border border-forest-900/15 text-charcoal text-xs sm:text-sm focus:outline-none focus:border-emerald font-semibold"
                 >
+                  <option value="">Select Internship Track</option>
                   {INTERNSHIP_TRACKS.map((t) => (
                     <option key={t} value={t}>{t}</option>
                   ))}

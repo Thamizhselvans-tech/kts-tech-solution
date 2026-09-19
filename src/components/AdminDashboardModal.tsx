@@ -18,9 +18,10 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'leads' | 'internships'>('leads');
+  const [activeTab, setActiveTab] = useState<'leads' | 'internships' | 'enquiries'>('leads');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [internships, setInternships] = useState<InternshipApplication[]>([]);
+  const [enquiries, setEnquiries] = useState<any[]>([]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('All');
@@ -41,12 +42,13 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
       })
       .then((data) => {
         if (data?.success) {
-          if (data.leads && data.leads.length > 0) setLeads(data.leads);
-          if (data.internships && data.internships.length > 0) setInternships(data.internships);
+          if (data.leads) setLeads(data.leads);
+          if (data.internships) setInternships(data.internships);
+          if (data.enquiries) setEnquiries(data.enquiries);
         }
       })
       .catch(() => {
-        // Fallback to stored local leads if offline
+        // Fallback
       });
   };
 
@@ -137,6 +139,20 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     }
   };
 
+  const handleEnquiryStatusChange = (enquiryId: string, newStatus: string) => {
+    setEnquiries(prev => prev.map(e => (e.enquiryId === enquiryId || e.id === enquiryId) ? { ...e, status: newStatus } : e));
+    if (adminToken) {
+      fetch('/api/admin/leads', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ id: enquiryId, type: 'enquiry', status: newStatus })
+      }).catch(() => {});
+    }
+  };
+
   const filteredLeads = leads.filter((l: any) => {
     const q = searchQuery.toLowerCase();
     const idStr = (l.leadId || l.referenceId || l.id || '').toLowerCase();
@@ -158,6 +174,19 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                           (a.email || '').toLowerCase().includes(q) ||
                           (a.internshipTrack || '').toLowerCase().includes(q) ||
                           (a.college || '').toLowerCase().includes(q) ||
+                          idStr.includes(q) ||
+                          phoneStr.includes(q);
+    return matchesSearch;
+  });
+
+  const filteredEnquiries = enquiries.filter((e: any) => {
+    const q = searchQuery.toLowerCase();
+    const idStr = (e.enquiryId || e.referenceId || e.id || '').toLowerCase();
+    const phoneStr = (e.phone || '').toLowerCase();
+    const matchesSearch = (e.name || '').toLowerCase().includes(q) ||
+                          (e.email || '').toLowerCase().includes(q) ||
+                          (e.enquiryType || '').toLowerCase().includes(q) ||
+                          (e.message || '').toLowerCase().includes(q) ||
                           idStr.includes(q) ||
                           phoneStr.includes(q);
     return matchesSearch;
@@ -210,7 +239,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   <Lock className="w-7 h-7 text-emerald" />
                 </div>
                 <h3 className="text-xl font-bold text-charcoal">Admin Portal Authentication</h3>
-                <p className="text-xs text-charcoal/70 font-mono">Sign in to access client leads & internship applications</p>
+                <p className="text-xs text-charcoal/70 font-mono">Sign in to access client leads & enquiries</p>
               </div>
 
               <form onSubmit={handleLogin} className="space-y-4">
@@ -319,6 +348,14 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                     }`}
                   >
                     Internship Applications ({internships.length})
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('enquiries')}
+                    className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all ${
+                      activeTab === 'enquiries' ? 'bg-forest-900 text-white' : 'bg-ivory-200 text-charcoal'
+                    }`}
+                  >
+                    General Enquiries ({enquiries.length})
                   </button>
                 </div>
 
@@ -448,7 +485,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                     </div>
                   )}
                 </div>
-              ) : (
+              ) : activeTab === 'internships' ? (
                 /* INTERNSHIP APPLICATIONS TABLE */
                 <div className="overflow-x-auto rounded-2xl border border-forest-900/10">
                   <table className="w-full text-left text-xs font-sans">
@@ -475,11 +512,11 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                             <div>{app.phone}</div>
                             <div className="text-[10px] text-emerald-muted">{app.email}</div>
                           </td>
-                          <td className="p-3 font-mono text-[11px]">{app.appliedDate}</td>
+                          <td className="p-3 font-mono text-[11px]">{app.appliedDate || (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '')}</td>
                           <td className="p-3">
                             <select
                               value={app.status}
-                              onChange={(e) => handleInternshipStatusChange(app.id, e.target.value as any)}
+                              onChange={(e) => handleInternshipStatusChange(app.applicationId || app.id, e.target.value as any)}
                               className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
                             >
                               <option>New</option>
@@ -492,6 +529,63 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                           </td>
                         </tr>
                       ))}
+                      {filteredInternships.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center text-charcoal/60 font-mono text-xs">
+                            No internship applications found.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                /* GENERAL ENQUIRIES TABLE */
+                <div className="overflow-x-auto rounded-2xl border border-forest-900/10">
+                  <table className="w-full text-left text-xs font-sans">
+                    <thead className="bg-forest-900 text-white font-mono text-[11px] uppercase">
+                      <tr>
+                        <th className="p-3">Enquiry ID</th>
+                        <th className="p-3">Name & Email</th>
+                        <th className="p-3">Phone</th>
+                        <th className="p-3">Type</th>
+                        <th className="p-3">Message</th>
+                        <th className="p-3">Date</th>
+                        <th className="p-3">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-forest-900/10 bg-ivory-50">
+                      {filteredEnquiries.map((enq) => (
+                        <tr key={enq.enquiryId || enq.id} className="hover:bg-emerald-soft/50 transition-colors">
+                          <td className="p-3 font-mono font-bold text-forest-900">{enq.enquiryId || enq.referenceId}</td>
+                          <td className="p-3">
+                            <div className="font-bold text-charcoal">{enq.name}</div>
+                            <div className="text-[11px] text-emerald-muted font-mono">{enq.email}</div>
+                          </td>
+                          <td className="p-3 font-mono">{enq.phone || 'N/A'}</td>
+                          <td className="p-3 font-semibold text-emerald-700">{enq.enquiryType}</td>
+                          <td className="p-3 max-w-xs truncate text-charcoal/80" title={enq.message}>{enq.message}</td>
+                          <td className="p-3 font-mono text-[11px]">{enq.createdAt ? new Date(enq.createdAt).toLocaleDateString() : 'N/A'}</td>
+                          <td className="p-3">
+                            <select
+                              value={enq.status || 'New'}
+                              onChange={(e) => handleEnquiryStatusChange(enq.enquiryId || enq.id, e.target.value)}
+                              className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
+                            >
+                              <option>New</option>
+                              <option>Contacted</option>
+                              <option>Resolved</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                      {filteredEnquiries.length === 0 && (
+                        <tr>
+                          <td colSpan={7} className="p-8 text-center text-charcoal/60 font-mono text-xs">
+                            No general website enquiries found.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

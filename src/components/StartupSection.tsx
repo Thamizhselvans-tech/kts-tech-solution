@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Rocket, ArrowRight, Lightbulb, Compass, Code, CheckCircle2 } from 'lucide-react';
 
 interface StartupSectionProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
+  onOpenProjectEnquiry: () => void;
 }
 
 export const StartupSection: React.FC<StartupSectionProps> = ({ onOpenProjectEnquiry }) => {
@@ -46,7 +46,7 @@ export const StartupSection: React.FC<StartupSectionProps> = ({ onOpenProjectEnq
             </p>
 
             <button
-              onClick={() => onOpenProjectEnquiry('Startup MVP')}
+              onClick={() => onOpenProjectEnquiry()}
               className="px-6 py-3 bg-emerald-light hover:bg-emerald text-white font-bold text-xs sm:text-sm rounded-xl shadow-forest-glow transition-all flex items-center gap-2 group"
             >
               <span>Discuss My Idea</span>

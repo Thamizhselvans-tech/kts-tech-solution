@@ -4,7 +4,7 @@ import { PROJECTS, Project } from '../data/portfolioData';
 import { ArrowRight, FolderGit2, Github, ExternalLink, CheckCircle2, Sparkles, Code2, FlaskConical } from 'lucide-react';
 
 interface WorkProps {
-  onOpenProjectEnquiry: (serviceType?: string) => void;
+  onOpenProjectEnquiry: () => void;
 }
 
 export const Work: React.FC<WorkProps> = ({ onOpenProjectEnquiry }) => {
@@ -246,7 +246,7 @@ export const Work: React.FC<WorkProps> = ({ onOpenProjectEnquiry }) => {
                 </div>
 
                 <button
-                  onClick={() => onOpenProjectEnquiry(activeProject.category)}
+                  onClick={() => onOpenProjectEnquiry()}
                   className="w-full py-2 bg-emerald-light hover:bg-emerald text-white text-xs font-bold rounded-md uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-sm transition-all font-mono"
                 >
                   <span>Discuss Your Project</span>
