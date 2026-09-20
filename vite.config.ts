@@ -1,13 +1,13 @@
 import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { handleProjectEnquiry } from './api/project-enquiry'
-import { handleGeneralEnquiry } from './api/general-enquiry'
-import { handleInternshipApplication } from './api/internship'
-import { handleAdminLeads } from './api/admin/leads'
-import { handleAdminLogin } from './api/admin/login'
-import { handleAdminInternships } from './api/admin/internships'
-import { handleAdminEnquiries } from './api/admin/enquiries'
+import { handleProjectEnquiry } from './server/project-enquiry'
+import { handleGeneralEnquiry } from './server/general-enquiry'
+import { handleInternshipApplication } from './server/internship'
+import { handleAdminLeads } from './server/admin/leads'
+import { handleAdminLogin } from './server/admin/login'
+import { handleAdminInternships } from './server/admin/internships'
+import { handleAdminEnquiries } from './server/admin/enquiries'
 
 const apiDevPlugin = (): Plugin => ({
   name: 'api-dev-middleware',
