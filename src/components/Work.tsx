@@ -55,7 +55,7 @@ export const Work: React.FC<WorkProps> = ({ onOpenProjectEnquiry }) => {
                   const firstMatching = PROJECTS.find((p) => grp.id === 'All' || p.group === grp.id);
                   if (firstMatching) setActiveProject(firstMatching);
                 }}
-                className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                   isSelected
                     ? 'bg-forest-900 text-white shadow-forest-subtle'
                     : 'bg-ivory-50 text-charcoal hover:bg-emerald-soft border border-forest-900/10'
@@ -191,13 +191,13 @@ export const Work: React.FC<WorkProps> = ({ onOpenProjectEnquiry }) => {
               </div>
 
               {/* Live Links & GitHub Code Links */}
-              <div className="flex flex-wrap items-center gap-2 pt-0.5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
                 {activeProject.liveDemoUrl && (
                   <a
                     href={activeProject.liveDemoUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3.5 py-1.5 sm:py-2 bg-forest-900 hover:bg-emerald text-white font-mono text-[11px] sm:text-xs font-bold rounded-md transition-all shadow-sm flex items-center gap-1.5"
+                    className="w-full sm:w-auto px-3.5 py-2 bg-forest-900 hover:bg-emerald text-white font-mono text-[11px] sm:text-xs font-bold rounded-md transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-[0.98]"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-emerald-light" />
                     <span>Launch Live Application</span>
@@ -209,7 +209,7 @@ export const Work: React.FC<WorkProps> = ({ onOpenProjectEnquiry }) => {
                     href={activeProject.githubUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3.5 py-1.5 sm:py-2 bg-ivory-200 hover:bg-forest-900 hover:text-white text-charcoal font-mono text-[11px] sm:text-xs font-bold rounded-md transition-all flex items-center gap-1.5 border border-forest-900/10"
+                    className="w-full sm:w-auto px-3.5 py-2 bg-ivory-200 hover:bg-forest-900 hover:text-white text-charcoal font-mono text-[11px] sm:text-xs font-bold rounded-md transition-all flex items-center justify-center gap-1.5 border border-forest-900/10 active:scale-[0.98]"
                   >
                     <Github className="w-3.5 h-3.5" />
                     <span>View Repository</span>

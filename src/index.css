@@ -11,11 +11,31 @@
     --color-muted: #5C6E63;
   }
 
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+
   body {
     background-color: #F4F7F2;
     color: var(--color-charcoal);
     font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
   }
+}
+
+/* Hide scrollbar for tabs/pills while keeping scrollability */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Subtle Engineering Grid Canvas (from reference) */

@@ -87,18 +87,18 @@ export const About: React.FC = () => {
             </div>
 
             {/* Core Focus Areas */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-6 mt-6 border-t border-forest-900/10 font-mono text-xs text-charcoal">
-              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 mt-6 border-t border-forest-900/10 font-mono text-xs text-charcoal">
+              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10 text-center sm:text-left">
                 <div className="font-bold text-forest-900 text-xs">Web & Apps</div>
                 <div className="text-[10px] text-emerald-muted mt-0.5">Frontend & Mobile</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10">
+              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10 text-center sm:text-left">
                 <div className="font-bold text-forest-900 text-xs">AI Integrations</div>
                 <div className="text-[10px] text-emerald-muted mt-0.5">Intelligent Solutions</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10">
+              <div className="p-3.5 rounded-xl bg-emerald-soft border border-forest-900/10 text-center sm:text-left">
                 <div className="font-bold text-forest-900 text-xs">Startup MVPs</div>
                 <div className="text-[10px] text-emerald-muted mt-0.5">Zero-to-One Products</div>
               </div>

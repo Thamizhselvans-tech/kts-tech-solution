@@ -124,7 +124,7 @@ export const WhyKryptonode: React.FC = () => {
               <motion.div
                 key={item.number}
                 variants={itemVariants}
-                className="group relative p-5 sm:p-6 rounded-2xl bg-ivory-50/90 hover:bg-emerald-soft/40 backdrop-blur-sm border border-forest-900/10 hover:border-emerald/40 shadow-forest-card hover:shadow-[0_10px_25px_-5px_rgba(46,139,87,0.18)] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
+                className="group relative p-4 sm:p-6 rounded-2xl bg-ivory-50/90 hover:bg-emerald-soft/40 backdrop-blur-sm border border-forest-900/10 hover:border-emerald/40 shadow-forest-card hover:shadow-[0_10px_25px_-5px_rgba(46,139,87,0.18)] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between overflow-hidden"
               >
                 {/* Subtle emerald corner aura on hover */}
                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-emerald/10 via-transparent to-transparent rounded-bl-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

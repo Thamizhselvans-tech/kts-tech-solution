@@ -268,39 +268,39 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-charcoal/80 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-charcoal/80 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="relative w-full max-w-5xl bg-ivory-100 rounded-3xl border border-forest-900/20 shadow-forest-card overflow-hidden my-auto max-h-[90vh] flex flex-col"
+          className="relative w-full max-w-5xl bg-ivory-100 rounded-2xl sm:rounded-3xl border border-forest-900/20 shadow-forest-card overflow-hidden my-auto max-h-[92vh] flex flex-col"
         >
           {/* Top Bar */}
-          <div className="flex items-center justify-between p-6 bg-forest-900 text-white shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-emerald-light text-white">
-                <Lock className="w-5 h-5" />
+          <div className="flex items-center justify-between p-4 sm:p-6 bg-forest-900 text-white shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-light text-white shrink-0">
+                <Lock className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold font-sans">Kryptonode Admin Lead & Application Portal</h3>
-                <p className="text-xs text-gray-300 font-mono">Secure Internal Operations Dashboard</p>
+                <h3 className="text-sm sm:text-lg font-bold font-sans">Kryptonode Admin Lead & Application Portal</h3>
+                <p className="text-[11px] sm:text-xs text-gray-300 font-mono">Secure Internal Operations Dashboard</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {authenticated && (
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-white text-xs font-mono transition-colors font-bold border border-red-500/30"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-white text-[11px] sm:text-xs font-mono transition-colors font-bold border border-red-500/30"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>Logout</span>
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               )}
               <button
                 onClick={onClose}
                 className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
@@ -447,8 +447,11 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
               {activeTab === 'leads' ? (
                 /* LEADS TABLE */
-                <div className="space-y-4">
-                  <div className="overflow-x-auto rounded-2xl border border-forest-900/10">
+                <div className="space-y-2">
+                  <div className="text-[10px] font-mono text-emerald-muted sm:hidden flex items-center justify-between px-1">
+                    <span>Swipe horizontally for full details →</span>
+                  </div>
+                  <div className="overflow-x-auto rounded-2xl border border-forest-900/10 -webkit-overflow-scrolling-touch">
                     <table className="w-full text-left text-xs font-sans">
                       <thead className="bg-forest-900 text-white font-mono text-[11px] uppercase">
                         <tr>

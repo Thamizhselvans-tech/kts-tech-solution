@@ -97,7 +97,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenAdmi
             
             <div className="space-y-2 text-xs font-mono">
               {TEAM_MEMBERS.map((m) => (
-                <div key={m.id} className="flex items-center justify-between text-charcoal">
+                <div key={m.id} className="flex flex-wrap items-center justify-between gap-1 text-charcoal py-0.5">
                   <span className="font-bold text-forest-900">{m.name}:</span>
                   <div className="flex items-center gap-2">
                     <a href={`tel:${m.phone}`} className="hover:underline font-semibold">{m.phone}</a>
@@ -121,12 +121,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenProjectEnquiry, onOpenAdmi
         </div>
 
         {/* Bottom Bar & Legal */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal/70">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-charcoal/70 text-center sm:text-left">
           <div>
             © {new Date().getFullYear()} Kryptonode Tech Solutions Pvt Ltd. All rights reserved.
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] font-mono">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] font-mono">
             <a href="#" className="hover:underline">Privacy Policy</a>
             <span>•</span>
             <a href="#" className="hover:underline">Terms & Conditions</a>

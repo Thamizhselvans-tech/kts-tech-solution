@@ -260,7 +260,7 @@ export const TechNodeAnimation: React.FC = () => {
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-[500px] rounded-3xl overflow-hidden border border-forest-800/70 shadow-forest-card bg-gradient-to-br from-[#05140D] via-[#0A2E1F] to-[#04120A] flex flex-col justify-between p-5 sm:p-6 select-none group transition-shadow duration-500 hover:shadow-forest-glow"
+      className="relative w-full max-w-[500px] rounded-2xl sm:rounded-3xl overflow-hidden border border-forest-800/70 shadow-forest-card bg-gradient-to-br from-[#05140D] via-[#0A2E1F] to-[#04120A] flex flex-col justify-between p-3.5 sm:p-5 md:p-6 select-none group transition-shadow duration-500 hover:shadow-forest-glow"
     >
       {/* Background Radial Glow in Theme Emerald */}
       <div className="absolute -top-24 -right-24 w-80 h-80 bg-emerald-light/20 rounded-full blur-3xl pointer-events-none" />
@@ -313,16 +313,16 @@ export const TechNodeAnimation: React.FC = () => {
               }}
               whileHover={{ scale: 1.025, x: 2 }}
               transition={{ type: 'spring', stiffness: 360, damping: 26 }}
-              className={`relative p-3.5 sm:p-4 rounded-2xl backdrop-blur-md transition-all duration-300 cursor-pointer flex items-center justify-between group ${
+              className={`relative p-2.5 sm:p-4 rounded-xl sm:rounded-2xl backdrop-blur-md transition-all duration-300 cursor-pointer flex items-center justify-between gap-2 group ${
                 isFloating
                   ? 'bg-gradient-to-r from-forest-900/95 via-[#0e442f]/95 to-forest-900/95 border border-emerald-light/75 shadow-[0_12px_28px_-4px_rgba(46,139,87,0.45),0_0_16px_rgba(74,222,128,0.25)] ring-1 ring-emerald-light/40'
                   : 'bg-forest-950/60 border border-white/10 hover:border-emerald-light/40 hover:bg-forest-950/80 shadow-sm'
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                 {/* Step Icon Container with Emerald Theme */}
                 <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center font-mono text-xs font-bold transition-all duration-300 shrink-0 shadow-sm ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center font-mono text-xs font-bold transition-all duration-300 shrink-0 shadow-sm ${
                     isFloating
                       ? 'bg-emerald text-white shadow-[0_0_16px_rgba(74,222,128,0.6)] ring-2 ring-emerald-light/50 scale-105'
                       : 'bg-forest-900/90 border border-emerald-light/35 text-emerald-light group-hover:bg-emerald group-hover:text-white'
@@ -332,29 +332,29 @@ export const TechNodeAnimation: React.FC = () => {
                     animate={isFloating ? { scale: [1, 1.18, 1] } : { scale: 1 }}
                     transition={{ duration: 0.4 }}
                   >
-                    <Icon className="w-4 h-4 text-white transition-colors" />
+                    <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-colors" />
                   </motion.div>
                 </div>
 
                 {/* Step Details */}
-                <div>
-                  <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <span
-                      className={`text-[10px] font-mono font-bold uppercase tracking-wider transition-colors ${
+                      className={`text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider transition-colors shrink-0 ${
                         isFloating ? 'text-emerald-light font-extrabold' : 'text-emerald-light'
                       }`}
                     >
                       {item.phase}
                     </span>
-                    <span className="text-[10px] font-mono text-gray-400 flex items-center gap-1">
+                    <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 flex items-center gap-1 truncate">
                       • Step {item.step}
                       {isFloating && (
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-light animate-ping" />
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-light animate-ping shrink-0" />
                       )}
                     </span>
                   </div>
                   <div
-                    className={`text-xs font-sans transition-colors ${
+                    className={`text-[11px] sm:text-xs font-sans transition-colors truncate sm:whitespace-normal ${
                       isFloating ? 'font-extrabold text-white' : 'font-bold text-white/90 group-hover:text-emerald-soft'
                     }`}
                   >

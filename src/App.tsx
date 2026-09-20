@@ -28,7 +28,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-forest-grid text-charcoal font-sans selection:bg-forest-900 selection:text-white">
+    <div className="min-h-screen w-full overflow-x-hidden bg-forest-grid text-charcoal font-sans selection:bg-forest-900 selection:text-white">
       {/* Navbar */}
       <Navbar
         onOpenProjectEnquiry={handleOpenProjectEnquiry}

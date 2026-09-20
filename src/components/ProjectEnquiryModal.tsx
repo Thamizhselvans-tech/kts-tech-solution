@@ -155,22 +155,22 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-charcoal/70 backdrop-blur-md">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto bg-charcoal/70 backdrop-blur-md">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-2xl bg-ivory-100 rounded-3xl border border-forest-900/20 shadow-forest-card overflow-hidden my-auto max-h-[90vh] flex flex-col"
+          className="relative w-full max-w-2xl bg-ivory-100 rounded-2xl sm:rounded-3xl border border-forest-900/20 shadow-forest-card overflow-hidden my-auto max-h-[92vh] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-5 sm:p-6 bg-forest-900 text-white shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-emerald-light text-white">
-                <Rocket className="w-5 h-5" />
+          <div className="flex items-center justify-between p-4 sm:p-6 bg-forest-900 text-white shrink-0">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-light text-white shrink-0">
+                <Rocket className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-bold font-sans">Start Your Project with Kryptonode</h3>
-                <p className="text-xs text-gray-300 font-mono">We Build Ideas Into Real Products.</p>
+                <h3 className="text-sm sm:text-lg font-bold font-sans">Start Your Project with Kryptonode</h3>
+                <p className="text-[11px] sm:text-xs text-gray-300 font-mono">We Build Ideas Into Real Products.</p>
               </div>
             </div>
             <button
@@ -208,7 +208,7 @@ export const ProjectEnquiryModal: React.FC<ProjectEnquiryModalProps> = ({ isOpen
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-4 overflow-y-auto font-sans">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-8 space-y-4 overflow-y-auto font-sans flex-1">
               
               {/* Spam Honeypot */}
               <input

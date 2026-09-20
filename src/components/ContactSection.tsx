@@ -209,13 +209,13 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Left Form Box (2 Paths) */}
-          <div className="lg:col-span-7 bg-ivory-50 p-5 sm:p-6 rounded-2xl border border-forest-900/10 shadow-forest-card">
+          <div className="lg:col-span-7 bg-ivory-50 p-4 sm:p-6 rounded-2xl border border-forest-900/10 shadow-forest-card">
             
             {/* Path Selector Tabs */}
-            <div className="flex items-center gap-2 p-1.5 bg-ivory-200 rounded-xl mb-6 border border-forest-900/10">
+            <div className="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-ivory-200 rounded-xl mb-6 border border-forest-900/10">
               <button
                 onClick={() => setActivePath('project')}
-                className={`flex-1 py-2.5 text-xs font-mono font-bold rounded-lg transition-all ${
+                className={`flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs font-mono font-bold rounded-lg transition-all text-center ${
                   activePath === 'project'
                     ? 'bg-forest-900 text-white shadow-forest-subtle'
                     : 'text-charcoal hover:text-forest-900'
@@ -226,7 +226,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
               <button
                 onClick={() => setActivePath('general')}
-                className={`flex-1 py-2.5 text-xs font-mono font-bold rounded-lg transition-all ${
+                className={`flex-1 py-2 sm:py-2.5 text-[10px] sm:text-xs font-mono font-bold rounded-lg transition-all text-center ${
                   activePath === 'general'
                     ? 'bg-forest-900 text-white shadow-forest-subtle'
                     : 'text-charcoal hover:text-forest-900'
@@ -625,13 +625,13 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
 
               <div className="space-y-2.5">
                 {TEAM_MEMBERS.map((member) => (
-                  <div key={member.id} className="p-3 rounded-xl bg-ivory-100 border border-forest-900/10 flex items-center justify-between">
+                  <div key={member.id} className="p-3 rounded-xl bg-ivory-100 border border-forest-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                     <div>
                       <div className="font-bold text-xs text-charcoal font-sans">{member.name}</div>
                       <div className="text-[10px] font-mono text-emerald-muted">{member.phone}</div>
                     </div>
                     
-                    <div className="flex items-center gap-1.5 font-mono text-xs">
+                    <div className="flex items-center gap-1.5 font-mono text-xs shrink-0">
                       <a
                         href={`tel:${member.phone}`}
                         className="px-2.5 py-1 bg-forest-900 text-white rounded-md font-bold text-[11px] flex items-center gap-1 hover:bg-emerald transition-colors"

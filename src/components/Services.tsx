@@ -83,10 +83,10 @@ export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
               </div>
 
               {/* Action buttons on each service card */}
-              <div className="pt-4 border-t border-forest-900/10 flex items-center justify-between gap-2">
+              <div className="pt-4 border-t border-forest-900/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
                 <button
                   onClick={() => setSelectedService(service)}
-                  className="text-xs font-mono font-bold text-emerald-muted hover:text-forest-900 flex items-center gap-1 transition-colors"
+                  className="text-xs font-mono font-bold text-emerald-muted hover:text-forest-900 flex items-center justify-center sm:justify-start gap-1 py-1 transition-colors"
                 >
                   <span>Learn More</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -94,7 +94,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
 
                 <button
                   onClick={() => onOpenProjectEnquiry()}
-                  className="px-3.5 py-2 bg-forest-900 hover:bg-emerald text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all shadow-forest-subtle"
+                  className="px-3.5 py-2.5 bg-forest-900 hover:bg-emerald text-white text-xs font-semibold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-forest-subtle active:scale-[0.98]"
                 >
                   <span>Discuss Your Project</span>
                   <ArrowRight className="w-3 h-3" />
@@ -107,12 +107,12 @@ export const Services: React.FC<ServicesProps> = ({ onOpenProjectEnquiry }) => {
         {/* Service Detail Modal */}
         <AnimatePresence>
           {selectedService && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/60 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/60 backdrop-blur-sm overflow-y-auto">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-ivory-100 p-8 rounded-3xl max-w-lg w-full border border-forest-900/15 shadow-forest-card relative"
+                className="bg-ivory-100 p-5 sm:p-8 rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto border border-forest-900/15 shadow-forest-card relative my-auto"
               >
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-forest-900/10">
                   <span className="text-xs font-mono font-bold text-emerald uppercase">

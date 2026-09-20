@@ -36,7 +36,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
             </div>
 
             {/* Main Heading */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal tracking-tight leading-[1.1] mb-4 font-sans">
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal tracking-tight leading-[1.15] sm:leading-[1.1] mb-4 font-sans">
               "We Build Ideas Into{' '}
               <span className="text-gradient-forest underline decoration-emerald/30 underline-offset-8">
                 Real Products."
@@ -44,12 +44,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
             </h1>
 
             {/* Supporting Copy */}
-            <p className="text-base sm:text-lg text-charcoal/80 leading-relaxed font-normal mb-6 max-w-2xl font-sans">
+            <p className="text-sm sm:text-lg text-charcoal/80 leading-relaxed font-normal mb-6 max-w-2xl font-sans">
               Kryptonode Tech Solutions helps startups, businesses and creators turn ideas into modern websites, mobile applications, AI-powered solutions and scalable digital products.
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto mb-6">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto mb-6">
               <button
                 onClick={() => onOpenProjectEnquiry()}
                 className="w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-bold tracking-wide text-white bg-forest-900 hover:bg-emerald rounded-xl shadow-forest-subtle hover:shadow-forest-glow transition-all duration-300 flex items-center justify-center gap-2 group active:scale-[0.98]"
@@ -60,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
 
               <a
                 href="#projects"
-                className="w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-semibold tracking-wide text-charcoal bg-ivory-100 hover:bg-emerald-soft border border-forest-900/15 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group"
+                className="w-full sm:w-auto px-6 py-3 text-xs sm:text-sm font-semibold tracking-wide text-charcoal bg-ivory-100 hover:bg-emerald-soft border border-forest-900/15 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group text-center"
               >
                 <span>Explore Our Work</span>
                 <ChevronRight className="w-4 h-4 text-emerald-muted group-hover:translate-x-0.5 transition-transform" />
@@ -68,7 +68,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenProjectEnquiry }) => {
             </div>
 
             {/* Sub-line */}
-            <div className="pt-4 border-t border-forest-900/10 text-xs font-mono font-semibold text-emerald-muted tracking-wide uppercase">
+            <div className="pt-4 border-t border-forest-900/10 text-[11px] sm:text-xs font-mono font-semibold text-emerald-muted tracking-wide uppercase leading-relaxed">
               Websites • Apps • AI • Business Systems • Startup Solutions
             </div>
           </motion.div>
