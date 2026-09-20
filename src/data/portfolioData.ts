@@ -476,19 +476,28 @@ export const getStoredLeads = (): Lead[] => {
   return initialLeads;
 };
 
-export const saveLead = (lead: Omit<Lead, 'id' | 'date' | 'status' | 'referenceId'>): Lead => {
+export const saveLead = (lead: Omit<Lead, 'id' | 'date' | 'status' | 'referenceId'> & { referenceId?: string; leadId?: string; id?: string }): Lead => {
   const current = getStoredLeads();
   const refNum = Math.floor(100000 + Math.random() * 900000);
+  const ref = lead.referenceId || lead.leadId || `KN-${refNum}`;
   const newLead: Lead = {
     ...lead,
-    id: `lead-${Date.now()}`,
+    id: lead.id || `lead-${Date.now()}`,
     date: new Date().toLocaleDateString(),
     status: 'New',
-    referenceId: `KN-${refNum}`
+    referenceId: ref,
+    leadId: ref
   };
   const updated = [newLead, ...current];
   localStorage.setItem(LEADS_KEY, JSON.stringify(updated));
   return newLead;
+};
+
+export const deleteStoredLead = (idOrRef: string): Lead[] => {
+  const current = getStoredLeads();
+  const updated = current.filter(l => l.id !== idOrRef && l.referenceId !== idOrRef && l.leadId !== idOrRef);
+  localStorage.setItem(LEADS_KEY, JSON.stringify(updated));
+  return updated;
 };
 
 export const updateLeadStatus = (id: string, status: Lead['status'], notes?: string): Lead[] => {
@@ -545,6 +554,13 @@ export const saveInternshipApplication = (app: Omit<InternshipApplication, 'id' 
 export const updateInternshipStatus = (id: string, status: InternshipApplication['status'], notes?: string): InternshipApplication[] => {
   const current = getStoredInternships();
   const updated = current.map((a) => (a.id === id ? { ...a, status, notes: notes ?? a.notes } : a));
+  localStorage.setItem(INTERNSHIPS_KEY, JSON.stringify(updated));
+  return updated;
+};
+
+export const deleteStoredInternship = (idOrRef: string): InternshipApplication[] => {
+  const current = getStoredInternships();
+  const updated = current.filter(a => a.id !== idOrRef && a.applicationId !== idOrRef && (a as any).referenceId !== idOrRef);
   localStorage.setItem(INTERNSHIPS_KEY, JSON.stringify(updated));
   return updated;
 };

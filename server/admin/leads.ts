@@ -40,16 +40,95 @@ export async function handleAdminLeads(req: any) {
 
     if (method === 'GET') {
       if (db) {
-        const leads = await db.collection('projectEnquiries').find({}).sort({ createdAt: -1 }).toArray();
-        const internships = await db.collection('internshipApplications').find({}).sort({ createdAt: -1 }).toArray();
-        const enquiries = await db.collection('generalEnquiries').find({}).sort({ createdAt: -1 }).toArray();
+        const rawLeads = await db.collection('projectEnquiries').find({}).sort({ createdAt: -1 }).toArray();
+        const rawInternships = await db.collection('internshipApplications').find({}).sort({ createdAt: -1 }).toArray();
+        const rawEnquiries = await db.collection('generalEnquiries').find({}).sort({ createdAt: -1 }).toArray();
+
+        const leads = rawLeads.map((l: any) => {
+          const ref = l.leadId || l.referenceId || (l._id ? `KN-${new Date(l.createdAt || Date.now()).getFullYear()}-${l._id.toString().slice(-6).toUpperCase()}` : 'KN-PENDING');
+          return {
+            ...l,
+            id: l.leadId || l.referenceId || l._id?.toString() || l.id,
+            leadId: ref,
+            referenceId: ref,
+            budget: l.budget || l.budgetRange || 'Guidance Needed',
+            date: l.date || (l.createdAt ? new Date(l.createdAt).toLocaleDateString() : new Date().toLocaleDateString())
+          };
+        });
+
+        const internships = rawInternships.map((a: any) => {
+          const ref = a.applicationId || a.referenceId || (a._id ? `KN-INT-${a._id.toString().slice(-6).toUpperCase()}` : 'KN-INT');
+          return {
+            ...a,
+            id: a.applicationId || a.referenceId || a._id?.toString() || a.id,
+            applicationId: ref,
+            referenceId: ref,
+            appliedDate: a.appliedDate || (a.createdAt ? new Date(a.createdAt).toLocaleDateString() : new Date().toLocaleDateString())
+          };
+        });
+
+        const enquiries = rawEnquiries.map((e: any) => {
+          const ref = e.enquiryId || e.referenceId || (e._id ? `KN-ENQ-${e._id.toString().slice(-6).toUpperCase()}` : 'KN-ENQ');
+          return {
+            ...e,
+            id: e.enquiryId || e.referenceId || e._id?.toString() || e.id,
+            enquiryId: ref,
+            referenceId: ref,
+            createdAt: e.createdAt || new Date().toISOString()
+          };
+        });
+
         return { status: 200, body: { success: true, leads, internships, enquiries } };
       }
       return { status: 200, body: { success: true, leads: [], internships: [], enquiries: [] } };
     }
 
+    if (method === 'DELETE') {
+      let bodyData = req.body || {};
+      if (typeof bodyData === 'string') {
+        try { bodyData = JSON.parse(bodyData); } catch {}
+      }
+      const targetId = bodyData.id || bodyData.leadId || bodyData.applicationId || bodyData.enquiryId || bodyData.targetId;
+      const type = bodyData.type || 'lead';
+
+      if (!targetId) {
+        return { status: 400, body: { success: false, message: 'Missing record ID to delete.' } };
+      }
+
+      if (db) {
+        const collectionName = type === 'internship'
+          ? 'internshipApplications'
+          : type === 'enquiry'
+          ? 'generalEnquiries'
+          : 'projectEnquiries';
+
+        const deleteFilter: any = {
+          $or: [
+            { id: targetId },
+            { leadId: targetId },
+            { applicationId: targetId },
+            { enquiryId: targetId },
+            { referenceId: targetId }
+          ]
+        };
+
+        if (typeof targetId === 'string' && targetId.length === 24 && /^[0-9a-fA-F]{24}$/.test(targetId)) {
+          const { ObjectId } = await import('mongodb');
+          deleteFilter.$or.push({ _id: new ObjectId(targetId) });
+        }
+
+        await db.collection(collectionName).deleteOne(deleteFilter);
+      }
+
+      return { status: 200, body: { success: true, message: 'Record deleted successfully.' } };
+    }
+
     if (method === 'PATCH' || method === 'POST') {
-      const { id, leadId, applicationId, enquiryId, type, status, notes } = req.body || {};
+      let bodyData = req.body || {};
+      if (typeof bodyData === 'string') {
+        try { bodyData = JSON.parse(bodyData); } catch {}
+      }
+      const { id, leadId, applicationId, enquiryId, type, status, notes } = bodyData;
       const targetId = id || leadId || applicationId || enquiryId;
 
       if (!targetId || !status) {

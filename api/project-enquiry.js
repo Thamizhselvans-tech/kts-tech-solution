@@ -259,12 +259,15 @@ async function handleProjectEnquiry(reqData) {
   const finalTimeline = (timeline || "Flexible").trim();
   const enquiryDocument = {
     leadId,
+    referenceId: leadId,
     name: name.trim(),
     email: email.trim().toLowerCase(),
     phone: phone.trim(),
     companyName: finalCompanyName,
+    company: finalCompanyName,
     projectType: projectType.trim(),
     budgetRange: finalBudgetRange,
+    budget: finalBudgetRange,
     timeline: finalTimeline,
     description: description.trim(),
     sourcePage: (sourcePage || "Website").trim(),

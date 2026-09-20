@@ -62,12 +62,15 @@ export async function handleProjectEnquiry(reqData: any) {
 
   const enquiryDocument = {
     leadId,
+    referenceId: leadId,
     name: name.trim(),
     email: email.trim().toLowerCase(),
     phone: phone.trim(),
     companyName: finalCompanyName,
+    company: finalCompanyName,
     projectType: projectType.trim(),
     budgetRange: finalBudgetRange,
+    budget: finalBudgetRange,
     timeline: finalTimeline,
     description: description.trim(),
     sourcePage: (sourcePage || 'Website').trim(),

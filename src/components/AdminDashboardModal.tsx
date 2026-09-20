@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Search, Filter, CheckCircle2, User, Mail, Phone, FileText, Download, Edit3, Briefcase, GraduationCap, Eye, EyeOff, LogOut } from 'lucide-react';
-import { getStoredLeads, updateLeadStatus, getStoredInternships, updateInternshipStatus, Lead, InternshipApplication } from '../data/portfolioData';
+import { X, Lock, Search, Filter, CheckCircle2, User, Mail, Phone, FileText, Download, Edit3, Briefcase, GraduationCap, Eye, EyeOff, LogOut, Trash2 } from 'lucide-react';
+import { getStoredLeads, updateLeadStatus, deleteStoredLead, getStoredInternships, updateInternshipStatus, deleteStoredInternship, Lead, InternshipApplication } from '../data/portfolioData';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
@@ -150,6 +150,80 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
         },
         body: JSON.stringify({ id: enquiryId, type: 'enquiry', status: newStatus })
       }).catch(() => {});
+    }
+  };
+
+  const handleDeleteLead = async (leadId: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete lead ${leadId}?`)) {
+      return;
+    }
+
+    setLeads((prev) => prev.filter((l: any) => (l.leadId !== leadId && l.referenceId !== leadId && l.id !== leadId)));
+    if (selectedLead && (selectedLead.id === leadId || selectedLead.referenceId === leadId || (selectedLead as any).leadId === leadId)) {
+      setSelectedLead(null);
+    }
+    deleteStoredLead(leadId);
+
+    if (adminToken) {
+      try {
+        await fetch('/api/admin/leads', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id: leadId, type: 'lead' })
+        });
+      } catch (err) {
+        console.error('Failed to delete lead from server:', err);
+      }
+    }
+  };
+
+  const handleDeleteInternship = async (appId: string) => {
+    if (!window.confirm('Are you sure you want to permanently delete this application?')) {
+      return;
+    }
+
+    setInternships((prev) => prev.filter((a: any) => (a.id !== appId && a.applicationId !== appId && a.referenceId !== appId)));
+    deleteStoredInternship(appId);
+
+    if (adminToken) {
+      try {
+        await fetch('/api/admin/leads', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id: appId, type: 'internship' })
+        });
+      } catch (err) {
+        console.error('Failed to delete application from server:', err);
+      }
+    }
+  };
+
+  const handleDeleteEnquiry = async (enquiryId: string) => {
+    if (!window.confirm('Are you sure you want to permanently delete this enquiry?')) {
+      return;
+    }
+
+    setEnquiries((prev) => prev.filter((e: any) => (e.id !== enquiryId && e.enquiryId !== enquiryId && e.referenceId !== enquiryId)));
+
+    if (adminToken) {
+      try {
+        await fetch('/api/admin/leads', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${adminToken}`
+          },
+          body: JSON.stringify({ id: enquiryId, type: 'enquiry' })
+        });
+      } catch (err) {
+        console.error('Failed to delete enquiry from server:', err);
+      }
     }
   };
 
@@ -388,44 +462,58 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-forest-900/10 bg-ivory-50">
-                        {filteredLeads.map((lead) => (
-                          <tr key={lead.id} className="hover:bg-emerald-soft/50 transition-colors">
-                            <td className="p-3 font-mono font-bold text-forest-900">{lead.referenceId}</td>
-                            <td className="p-3">
-                              <div className="font-bold text-charcoal">{lead.name}</div>
-                              <div className="text-[11px] text-emerald-muted font-mono">{lead.email}</div>
-                            </td>
-                            <td className="p-3 font-mono">
-                              <a href={`tel:${lead.phone}`} className="hover:underline text-forest-900 font-bold">
-                                {lead.phone}
-                              </a>
-                            </td>
-                            <td className="p-3 font-semibold">{lead.projectType}</td>
-                            <td className="p-3 font-mono">{lead.budget}</td>
-                            <td className="p-3">
-                              <select
-                                value={lead.status}
-                                onChange={(e) => handleStatusChange(lead.id, e.target.value as any)}
-                                className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
-                              >
-                                <option>New</option>
-                                <option>Contacted</option>
-                                <option>Discussion</option>
-                                <option>Proposal Sent</option>
-                                <option>Won</option>
-                                <option>Lost</option>
-                              </select>
-                            </td>
-                            <td className="p-3">
-                              <button
-                                onClick={() => setSelectedLead(lead)}
-                                className="px-3 py-1 bg-forest-900 text-white rounded font-mono text-[11px] hover:bg-emerald"
-                              >
-                                View Details
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {filteredLeads.map((lead) => {
+                          const leadKey = lead.id || lead.referenceId || lead.leadId || (lead as any)._id;
+                          const refId = lead.referenceId || lead.leadId || lead.id || 'KN-PENDING';
+                          const budgetVal = lead.budget || (lead as any).budgetRange || 'Guidance Needed';
+                          return (
+                            <tr key={leadKey} className="hover:bg-emerald-soft/50 transition-colors">
+                              <td className="p-3 font-mono font-bold text-forest-900">{refId}</td>
+                              <td className="p-3">
+                                <div className="font-bold text-charcoal">{lead.name}</div>
+                                <div className="text-[11px] text-emerald-muted font-mono">{lead.email}</div>
+                              </td>
+                              <td className="p-3 font-mono">
+                                <a href={`tel:${lead.phone}`} className="hover:underline text-forest-900 font-bold">
+                                  {lead.phone}
+                                </a>
+                              </td>
+                              <td className="p-3 font-semibold">{lead.projectType}</td>
+                              <td className="p-3 font-mono">{budgetVal}</td>
+                              <td className="p-3">
+                                <select
+                                  value={lead.status}
+                                  onChange={(e) => handleStatusChange(lead.id || refId, e.target.value as any)}
+                                  className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
+                                >
+                                  <option>New</option>
+                                  <option>Contacted</option>
+                                  <option>Discussion</option>
+                                  <option>Proposal Sent</option>
+                                  <option>Won</option>
+                                  <option>Lost</option>
+                                </select>
+                              </td>
+                              <td className="p-3">
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => setSelectedLead(lead)}
+                                    className="px-2.5 py-1 bg-forest-900 text-white rounded-lg font-mono text-[11px] hover:bg-emerald transition-colors whitespace-nowrap"
+                                  >
+                                    View Details
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteLead(refId)}
+                                    className="p-1.5 text-red-500 hover:text-white hover:bg-red-600 rounded-lg transition-colors border border-red-200 hover:border-red-600"
+                                    title="Delete Lead"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -497,41 +585,55 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                         <th className="p-3">Phone & Email</th>
                         <th className="p-3">Applied Date</th>
                         <th className="p-3">Status</th>
+                        <th className="p-3">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-forest-900/10 bg-ivory-50">
-                      {filteredInternships.map((app) => (
-                        <tr key={app.id} className="hover:bg-emerald-soft/50 transition-colors">
-                          <td className="p-3 font-bold text-charcoal">{app.fullName}</td>
-                          <td className="p-3 font-mono font-bold text-forest-900">{app.internshipTrack}</td>
-                          <td className="p-3">
-                            <div>{app.college}</div>
-                            <div className="text-[10px] text-emerald-muted">{app.degree} ({app.department})</div>
-                          </td>
-                          <td className="p-3 font-mono">
-                            <div>{app.phone}</div>
-                            <div className="text-[10px] text-emerald-muted">{app.email}</div>
-                          </td>
-                          <td className="p-3 font-mono text-[11px]">{app.appliedDate || (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '')}</td>
-                          <td className="p-3">
-                            <select
-                              value={app.status}
-                              onChange={(e) => handleInternshipStatusChange(app.applicationId || app.id, e.target.value as any)}
-                              className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
-                            >
-                              <option>New</option>
-                              <option>Reviewed</option>
-                              <option>Shortlisted</option>
-                              <option>Accepted</option>
-                              <option>Rejected</option>
-                              <option>Completed</option>
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                      {filteredInternships.map((app) => {
+                        const appKey = app.id || app.applicationId || (app as any)._id;
+                        const appId = app.applicationId || app.id || (app as any)._id;
+                        return (
+                          <tr key={appKey} className="hover:bg-emerald-soft/50 transition-colors">
+                            <td className="p-3 font-bold text-charcoal">{app.fullName}</td>
+                            <td className="p-3 font-mono font-bold text-forest-900">{app.internshipTrack}</td>
+                            <td className="p-3">
+                              <div>{app.college}</div>
+                              <div className="text-[10px] text-emerald-muted">{app.degree} ({app.department})</div>
+                            </td>
+                            <td className="p-3 font-mono">
+                              <div>{app.phone}</div>
+                              <div className="text-[10px] text-emerald-muted">{app.email}</div>
+                            </td>
+                            <td className="p-3 font-mono text-[11px]">{app.appliedDate || (app.createdAt ? new Date(app.createdAt).toLocaleDateString() : '')}</td>
+                            <td className="p-3">
+                              <select
+                                value={app.status}
+                                onChange={(e) => handleInternshipStatusChange(app.applicationId || app.id, e.target.value as any)}
+                                className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
+                              >
+                                <option>New</option>
+                                <option>Reviewed</option>
+                                <option>Shortlisted</option>
+                                <option>Accepted</option>
+                                <option>Rejected</option>
+                                <option>Completed</option>
+                              </select>
+                            </td>
+                            <td className="p-3">
+                              <button
+                                onClick={() => handleDeleteInternship(appId)}
+                                className="p-1.5 text-red-500 hover:text-white hover:bg-red-600 rounded-lg transition-colors border border-red-200 hover:border-red-600"
+                                title="Delete Application"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {filteredInternships.length === 0 && (
                         <tr>
-                          <td colSpan={6} className="p-8 text-center text-charcoal/60 font-mono text-xs">
+                          <td colSpan={7} className="p-8 text-center text-charcoal/60 font-mono text-xs">
                             No internship applications found.
                           </td>
                         </tr>
@@ -552,36 +654,50 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                         <th className="p-3">Message</th>
                         <th className="p-3">Date</th>
                         <th className="p-3">Status</th>
+                        <th className="p-3">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-forest-900/10 bg-ivory-50">
-                      {filteredEnquiries.map((enq) => (
-                        <tr key={enq.enquiryId || enq.id} className="hover:bg-emerald-soft/50 transition-colors">
-                          <td className="p-3 font-mono font-bold text-forest-900">{enq.enquiryId || enq.referenceId}</td>
-                          <td className="p-3">
-                            <div className="font-bold text-charcoal">{enq.name}</div>
-                            <div className="text-[11px] text-emerald-muted font-mono">{enq.email}</div>
-                          </td>
-                          <td className="p-3 font-mono">{enq.phone || 'N/A'}</td>
-                          <td className="p-3 font-semibold text-emerald-700">{enq.enquiryType}</td>
-                          <td className="p-3 max-w-xs truncate text-charcoal/80" title={enq.message}>{enq.message}</td>
-                          <td className="p-3 font-mono text-[11px]">{enq.createdAt ? new Date(enq.createdAt).toLocaleDateString() : 'N/A'}</td>
-                          <td className="p-3">
-                            <select
-                              value={enq.status || 'New'}
-                              onChange={(e) => handleEnquiryStatusChange(enq.enquiryId || enq.id, e.target.value)}
-                              className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
-                            >
-                              <option>New</option>
-                              <option>Contacted</option>
-                              <option>Resolved</option>
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
+                      {filteredEnquiries.map((enq) => {
+                        const enqKey = enq.enquiryId || enq.id || (enq as any)._id;
+                        const enqId = enq.enquiryId || enq.referenceId || enq.id || (enq as any)._id;
+                        return (
+                          <tr key={enqKey} className="hover:bg-emerald-soft/50 transition-colors">
+                            <td className="p-3 font-mono font-bold text-forest-900">{enqId}</td>
+                            <td className="p-3">
+                              <div className="font-bold text-charcoal">{enq.name}</div>
+                              <div className="text-[11px] text-emerald-muted font-mono">{enq.email}</div>
+                            </td>
+                            <td className="p-3 font-mono">{enq.phone || 'N/A'}</td>
+                            <td className="p-3 font-semibold text-emerald-700">{enq.enquiryType}</td>
+                            <td className="p-3 max-w-xs truncate text-charcoal/80" title={enq.message}>{enq.message}</td>
+                            <td className="p-3 font-mono text-[11px]">{enq.createdAt ? new Date(enq.createdAt).toLocaleDateString() : 'N/A'}</td>
+                            <td className="p-3">
+                              <select
+                                value={enq.status || 'New'}
+                                onChange={(e) => handleEnquiryStatusChange(enq.enquiryId || enq.id, e.target.value)}
+                                className="px-2 py-1 rounded bg-ivory-100 border border-forest-900/15 text-[11px] font-mono font-bold text-forest-900"
+                              >
+                                <option>New</option>
+                                <option>Contacted</option>
+                                <option>Resolved</option>
+                              </select>
+                            </td>
+                            <td className="p-3">
+                              <button
+                                onClick={() => handleDeleteEnquiry(enqId)}
+                                className="p-1.5 text-red-500 hover:text-white hover:bg-red-600 rounded-lg transition-colors border border-red-200 hover:border-red-600"
+                                title="Delete Enquiry"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
                       {filteredEnquiries.length === 0 && (
                         <tr>
-                          <td colSpan={7} className="p-8 text-center text-charcoal/60 font-mono text-xs">
+                          <td colSpan={8} className="p-8 text-center text-charcoal/60 font-mono text-xs">
                             No general website enquiries found.
                           </td>
                         </tr>
