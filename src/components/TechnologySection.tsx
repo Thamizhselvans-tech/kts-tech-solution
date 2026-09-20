@@ -63,8 +63,26 @@ export const TechnologySection: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-6 sm:mb-10">
+        {/* Infinite Horizontal Ticker Showcase with Gradient Masks */}
+        <div className="relative overflow-hidden py-3 sm:py-4 border-y border-forest-900/10 bg-ivory-50 rounded-2xl mb-8 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-8 sm:before:w-16 before:bg-gradient-to-r before:from-ivory-50 before:to-transparent before:z-10 after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 sm:after:w-16 after:bg-gradient-to-l after:from-ivory-50 after:to-transparent after:z-10">
+          <div className="animate-infinite-scroll flex items-center gap-3 sm:gap-4">
+            {tickerItems.map((tech, idx) => (
+              <div
+                key={`${tech.name}-${idx}`}
+                className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-ivory-100 border border-forest-900/10 flex items-center gap-2.5 sm:gap-3 shrink-0 hover:border-emerald/40 transition-colors shadow-forest-subtle"
+              >
+                {getTechIcon(tech.icon)}
+                <span className="text-xs font-bold text-charcoal font-sans">{tech.name}</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-soft text-emerald-muted font-bold">
+                  {tech.category}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Category Filters (Directly controlling grid below) */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-6">
           {categories.map((cat) => (
             <button
               key={cat}
@@ -80,36 +98,27 @@ export const TechnologySection: React.FC = () => {
           ))}
         </div>
 
-        {/* Infinite Horizontal Ticker Showcase with Gradient Masks */}
-        <div className="relative overflow-hidden py-3 sm:py-4 border-y border-forest-900/10 bg-ivory-50 rounded-2xl before:absolute before:left-0 before:top-0 before:bottom-0 before:w-8 sm:before:w-16 before:bg-gradient-to-r before:from-ivory-50 before:to-transparent before:z-10 after:absolute after:right-0 after:top-0 after:bottom-0 after:w-8 sm:after:w-16 after:bg-gradient-to-l after:from-ivory-50 after:to-transparent after:z-10">
-          <div className="animate-infinite-scroll flex items-center gap-3 sm:gap-4">
-            {tickerItems.map((tech, idx) => (
-              <div
-                key={`${tech.name}-${idx}`}
-                className="px-4 py-2.5 sm:px-5 sm:py-3 rounded-xl bg-ivory-100 border border-forest-900/10 flex items-center gap-2.5 sm:gap-3 shrink-0 hover:border-emerald/40 transition-colors shadow-forest-subtle"
-              >
-                {getTechIcon(tech.icon)}
-                <span className="text-xs font-bold text-charcoal font-sans">{tech.name}</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-soft text-emerald-muted">
-                  {tech.category}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Filtered Grid View */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3 mt-6 sm:mt-8">
+        {/* Filtered Grid View - Fully Responsive and Free of Text Collision */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3">
           {filteredTech.map((tech) => (
             <div
               key={tech.name}
-              className="p-3.5 rounded-xl bg-ivory-50 border border-forest-900/10 flex items-center justify-between hover:bg-emerald-soft transition-colors"
+              className="p-3 sm:p-3.5 rounded-xl bg-ivory-50 border border-forest-900/10 flex flex-col justify-between gap-2.5 hover:bg-emerald-soft/60 hover:border-emerald/40 transition-all shadow-sm group min-h-[82px]"
             >
-              <div className="flex items-center gap-2.5">
-                {getTechIcon(tech.icon)}
-                <span className="text-xs font-bold text-charcoal font-sans">{tech.name}</span>
+              {/* Top Row: Icon + Category Badge */}
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="w-7 h-7 rounded-lg bg-emerald-soft group-hover:bg-forest-900 flex items-center justify-center transition-colors shrink-0">
+                  {getTechIcon(tech.icon)}
+                </div>
+                <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-forest-900/5 text-emerald-muted group-hover:bg-emerald/20 group-hover:text-forest-900 shrink-0">
+                  {tech.category}
+                </span>
               </div>
-              <span className="text-[9px] font-mono text-emerald-muted uppercase">{tech.category}</span>
+
+              {/* Bottom Row: Name (Always has 100% width, zero collision) */}
+              <div className="text-xs sm:text-sm font-bold text-charcoal font-sans group-hover:text-forest-900 transition-colors truncate">
+                {tech.name}
+              </div>
             </div>
           ))}
         </div>
