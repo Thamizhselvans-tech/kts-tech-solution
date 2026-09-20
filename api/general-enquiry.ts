@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import { connectToDatabase } from './_db';
-import { sendGeneralEnquiryEmails } from './_email';
+import * as crypto from 'crypto';
+import { connectToDatabase } from './_db.ts';
+import { sendGeneralEnquiryEmails } from './_email.ts';
 
 function generateRandomSuffix(): string {
   return crypto.randomBytes(4).toString('hex').substring(0, 6).toUpperCase();

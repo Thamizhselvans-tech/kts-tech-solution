@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import { connectToDatabase } from './_db';
-import { sendInternshipApplicationEmails } from './_email';
+import * as crypto from 'crypto';
+import { connectToDatabase } from './_db.ts';
+import { sendInternshipApplicationEmails } from './_email.ts';
 
 const ALLOWED_TRACKS = [
   'Full-Stack Development',

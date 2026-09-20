@@ -1,7 +1,11 @@
 import { MongoClient, Db } from 'mongodb';
-import dotenv from 'dotenv';
 
-dotenv.config({ override: true });
+try {
+  const dotenv = await import('dotenv');
+  dotenv.default?.config?.({ override: true });
+} catch {
+  // In production (e.g. Vercel), environment variables are provided directly by the environment.
+}
 
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;

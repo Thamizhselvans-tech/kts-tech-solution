@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import { connectToDatabase } from './_db';
-import { sendProjectEnquiryEmails } from './_email';
+import * as crypto from 'crypto';
+import { connectToDatabase } from './_db.ts';
+import { sendProjectEnquiryEmails } from './_email.ts';
 
 function generateRandomSuffix(): string {
   // Generate 6 uppercase alphanumeric characters (e.g. A8F3K2)

@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import { connectToDatabase } from '../_db';
+import { connectToDatabase } from '../_db.ts';
 
 // In-memory rate limiting map for login attempts
 const loginAttempts = new Map<string, { count: number; firstAttempt: number }>();

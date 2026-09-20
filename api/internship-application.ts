@@ -1,4 +1,4 @@
-import { handleInternshipApplication } from './internship';
+import { handleInternshipApplication } from './internship.ts';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {

@@ -1,5 +1,5 @@
-import { connectToDatabase } from '../_db';
-import { verifyToken } from './login';
+import { connectToDatabase } from '../_db.ts';
+import { verifyToken } from './login.ts';
 
 export function extractToken(req: any): string | null {
   const authHeader = req.headers?.authorization || req.headers?.Authorization;

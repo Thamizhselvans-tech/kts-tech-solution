@@ -1,6 +1,6 @@
-import { connectToDatabase } from '../_db';
-import { extractToken } from './leads';
-import { verifyToken } from './login';
+import { connectToDatabase } from '../_db.ts';
+import { extractToken } from './leads.ts';
+import { verifyToken } from './login.ts';
 
 export async function handleAdminEnquiries(req: any) {
   if (req.method !== 'GET') {
